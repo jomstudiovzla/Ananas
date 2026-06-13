@@ -1,14 +1,15 @@
 "use client";
 import { Apple, Beef, PackageOpen, SprayCan, Wine, Syringe } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const categories = [
-  { name: 'Frutas y Vegetales', icon: Apple, color: 'bg-[#8cc63f]' },
-  { name: 'Refrigerados', icon: Beef, color: 'bg-[#231f20]' },
-  { name: 'Víveres', icon: PackageOpen, color: 'bg-[#f26522]' },
-  { name: 'Salud', icon: Syringe, color: 'bg-[#0054a6]' },
-  { name: 'Limpieza', icon: SprayCan, color: 'bg-[#00a651]' },
-  { name: 'Licores', icon: Wine, color: 'bg-[#9e005d]' },
+  { id: 'frutas-vegetales', name: 'Frutas y Vegetales', icon: Apple, color: 'bg-[#8cc63f]' },
+  { id: 'refrigerados-congelados', name: 'Refrigerados', icon: Beef, color: 'bg-[#231f20]' },
+  { id: 'viveres', name: 'Víveres', icon: PackageOpen, color: 'bg-[#f26522]' },
+  { id: 'cuidado-personal-salud', name: 'Salud', icon: Syringe, color: 'bg-[#0054a6]' },
+  { id: 'limpieza', name: 'Limpieza', icon: SprayCan, color: 'bg-[#00a651]' },
+  { id: 'licores', name: 'Licores', icon: Wine, color: 'bg-[#9e005d]' },
 ];
 
 export default function Categories() {
@@ -23,19 +24,20 @@ export default function Categories() {
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
         {categories.map((cat, i) => (
-          <motion.div 
-            key={cat.name}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            whileHover={{ y: -5, scale: 1.03 }}
-            className={`${cat.color} text-white p-6 rounded-[1.5rem] shadow-xl cursor-pointer flex flex-col items-center justify-center min-h-[160px] md:min-h-[180px] relative overflow-hidden group`}
-          >
-            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            <cat.icon size={56} strokeWidth={1.5} className="mb-4 group-hover:scale-110 transition-transform duration-300 drop-shadow-md" />
-            <span className="text-sm font-bold text-center tracking-wide leading-tight">{cat.name}</span>
-          </motion.div>
+          <Link href={`/category/${cat.id}/`} key={cat.id} className="block group">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -5, scale: 1.03 }}
+              className={`${cat.color} text-white p-6 rounded-[1.5rem] shadow-xl cursor-pointer flex flex-col items-center justify-center min-h-[160px] md:min-h-[180px] relative overflow-hidden h-full`}
+            >
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+              <cat.icon size={56} strokeWidth={1.5} className="mb-4 group-hover:scale-110 transition-transform duration-300 drop-shadow-md" />
+              <span className="text-sm font-bold text-center tracking-wide leading-tight">{cat.name}</span>
+            </motion.div>
+          </Link>
         ))}
       </div>
     </section>
