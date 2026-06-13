@@ -73,6 +73,9 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'ananas-storage',
+      partialize: (state) => Object.fromEntries(
+        Object.entries(state).filter(([key]) => !['products'].includes(key))
+      ),
     }
   )
 );

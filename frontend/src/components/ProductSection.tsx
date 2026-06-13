@@ -22,10 +22,9 @@ export default function ProductSection({ title, categoryId, products }: { title:
   return (
     <section className="max-w-7xl mx-auto py-12 px-4">
       <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
-        <Link href={`/category/${categoryId}/`} className="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-4 group">
+        <h2 className="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-4 group">
           {title}
-          <span className="text-ananas-green text-sm font-bold group-hover:underline transition">Ver Todo &rarr;</span>
-        </Link>
+        </h2>
         <div className="flex gap-3 hidden md:flex">
           <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-ananas-green hover:border-ananas-green hover:text-white transition shadow-sm"><ChevronLeft size={20} /></button>
           <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-ananas-green hover:border-ananas-green hover:text-white transition shadow-sm"><ChevronRight size={20} /></button>
