@@ -4,9 +4,12 @@ import { motion } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { Product } from '@/data/mockDb';
 import Link from 'next/link';
+import { useState } from 'react';
+import ProductModal from './ProductModal';
 
 export default function ProductGrid({ products }: { products: Product[] }) {
   const addToCart = useStore(state => state.addToCart);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   if (products.length === 0) {
     return (
@@ -37,7 +40,7 @@ export default function ProductGrid({ products }: { products: Product[] }) {
             <Plus size={20} strokeWidth={2.5} />
           </button>
           
-          <Link href={`/product/${p.id}`} className="block flex-1 flex flex-col">
+          <div onClick={() => setSelectedProduct(p as Product)} className="block flex-1 flex flex-col cursor-pointer">
             <div className="h-48 flex items-center justify-center mb-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 overflow-hidden relative">
               <div className="absolute inset-0 mix-blend-overlay bg-black/5 rounded-2xl"></div>
               <motion.img 
@@ -61,9 +64,10 @@ export default function ProductGrid({ products }: { products: Product[] }) {
                 <span className="text-xs font-bold text-ananas-dark bg-ananas-green/10 px-3 py-1.5 rounded-lg border border-ananas-green/20">{p.unit || '1 Kg'}</span>
               </div>
             </div>
-          </Link>
+          </div>
         </motion.div>
       ))}
+      <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
     </div>
   );
 }

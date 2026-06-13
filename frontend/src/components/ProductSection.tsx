@@ -3,6 +3,8 @@ import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import Link from 'next/link';
+import { useState } from 'react';
+import ProductModal from './ProductModal';
 
 interface Product {
   id: string;
@@ -15,6 +17,8 @@ interface Product {
 
 export default function ProductSection({ title, categoryId, products }: { title: string, categoryId: string, products: Product[] }) {
   const addToCart = useStore(state => state.addToCart);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  
   return (
     <section className="max-w-7xl mx-auto py-12 px-4">
       <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
@@ -48,7 +52,7 @@ export default function ProductSection({ title, categoryId, products }: { title:
               <Plus size={20} strokeWidth={2.5} />
             </button>
             
-            <Link href={`/product/${p.id}`} className="block flex-1 flex flex-col">
+            <div onClick={() => setSelectedProduct(p)} className="block flex-1 flex flex-col cursor-pointer">
               <div className="h-48 flex items-center justify-center mb-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 overflow-hidden relative">
                 <div className="absolute inset-0 mix-blend-overlay bg-black/5 rounded-2xl"></div>
                 <motion.img 
@@ -66,11 +70,12 @@ export default function ProductSection({ title, categoryId, products }: { title:
                 <p className="text-2xl font-black text-gray-800">${p.price.toFixed(2)}</p>
                 <span className="text-xs font-bold text-ananas-dark bg-ananas-green/10 px-3 py-1.5 rounded-lg border border-ananas-green/20">{p.unit || '1 Kg'}</span>
               </div>
+              </div>
             </div>
-            </Link>
           </motion.div>
         ))}
       </div>
+      <ProductModal product={selectedProduct as any} onClose={() => setSelectedProduct(null)} />
     </section>
   );
 }
