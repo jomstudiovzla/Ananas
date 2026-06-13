@@ -698,3 +698,4 @@ for (const cat of rawData) {
     globalId++;
   }
 }
+export const zones = ['San Luis El Cafetal'];
