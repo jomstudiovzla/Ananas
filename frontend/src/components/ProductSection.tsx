@@ -3,7 +3,7 @@ import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import ProductModal from './ProductModal';
 
 interface Product {
@@ -18,6 +18,14 @@ interface Product {
 export default function ProductSection({ title, categoryId, products }: { title: string, categoryId: string, products: Product[] }) {
   const addToCart = useStore(state => state.addToCart);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = direction === 'left' ? -350 : 350;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
   
   return (
     <section className="max-w-7xl mx-auto py-12 px-4">
@@ -26,12 +34,12 @@ export default function ProductSection({ title, categoryId, products }: { title:
           {title}
         </h2>
         <div className="flex gap-3 hidden md:flex">
-          <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-ananas-green hover:border-ananas-green hover:text-white transition shadow-sm"><ChevronLeft size={20} /></button>
-          <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-ananas-green hover:border-ananas-green hover:text-white transition shadow-sm"><ChevronRight size={20} /></button>
+          <button onClick={() => scroll('left')} className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-ananas-green hover:border-ananas-green hover:text-white transition shadow-sm"><ChevronLeft size={20} /></button>
+          <button onClick={() => scroll('right')} className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-ananas-green hover:border-ananas-green hover:text-white transition shadow-sm"><ChevronRight size={20} /></button>
         </div>
       </div>
 
-      <div className="flex overflow-x-auto gap-6 pb-8 hide-scrollbar snap-x">
+      <div ref={scrollRef} className="flex overflow-x-auto gap-6 pb-8 hide-scrollbar snap-x">
         {products.map((p, i) => (
           <motion.div 
             key={i}
