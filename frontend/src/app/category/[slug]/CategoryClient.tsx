@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 export default function CategoryClient({ slug }: { slug: string }) {
   const products = useStore(state => state.products);
   const [mounted, setMounted] = useState(false);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -17,7 +18,11 @@ export default function CategoryClient({ slug }: { slug: string }) {
   
   if (!category) return notFound();
 
-  const categoryProducts = products.filter(p => p.category === slug);
+  const categoryProducts = products.filter(p => {
+    if (p.category !== slug) return false;
+    if (activeSubcategory && p.subcategory !== activeSubcategory) return false;
+    return true;
+  });
 
   if (!mounted) return null;
 
@@ -29,8 +34,18 @@ export default function CategoryClient({ slug }: { slug: string }) {
         
         {category.subcategories && category.subcategories.length > 0 && (
           <div className="flex gap-3 mt-6 overflow-x-auto pb-2">
+            <span 
+              onClick={() => setActiveSubcategory(null)}
+              className={`px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer transition ${activeSubcategory === null ? 'bg-white text-gray-900' : 'bg-white/20 hover:bg-white/30'}`}
+            >
+              Todos
+            </span>
             {category.subcategories.map(sub => (
-              <span key={sub} className="bg-white/20 px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer hover:bg-white/30 transition">
+              <span 
+                key={sub} 
+                onClick={() => setActiveSubcategory(sub)}
+                className={`px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer transition ${activeSubcategory === sub ? 'bg-white text-gray-900' : 'bg-white/20 hover:bg-white/30'}`}
+              >
                 {sub}
               </span>
             ))}
