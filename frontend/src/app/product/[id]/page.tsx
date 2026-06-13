@@ -7,6 +7,7 @@ export function generateStaticParams() {
   }));
 }
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-  return <ProductClient id={params.id} />;
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  return <ProductClient id={resolvedParams.id} />;
 }

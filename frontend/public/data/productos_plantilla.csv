@@ -1,0 +1,11 @@
+id,name,price,category,subcategory,image,unit,labels,stock,warehouseStock
+p1,Tomates Perita,3.49,frutas-vegetales,Frescos,https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400,1 Kg,Oferta,50,200
+p2,Lechosa,1.75,frutas-vegetales,Enteras,https://images.unsplash.com/photo-1615486171448-4fd1ab2c88f3?w=400,1 Kg,,30,100
+p3,Limones,4.19,frutas-vegetales,Frescos,https://images.unsplash.com/photo-1590502593747-42a996111401?w=400,1 Kg,,100,500
+p4,Piña,2.55,frutas-vegetales,Enteras,https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=400,1 Unidad,,20,50
+p5,Aguacate,5.20,frutas-vegetales,Frescos,https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400,1 Kg,Top,40,120
+p6,Carne Molida SV,9.95,refrigerados-congelados,Carnes,https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400,1 Kg,,15,60
+p7,Pechuga de Pollo sin Hueso,8.45,refrigerados-congelados,Pollos,https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400,1 Kg,Oferta,25,80
+p8,Vino Tinto Merlot,15.00,licores,Vinos,https://images.unsplash.com/photo-1585553616435-2dc0a54e271d?w=400,750 ml,,50,200
+p9,Arroz Blanco,1.20,viveres,Arroz,https://images.unsplash.com/photo-1586201375761-83865001e8ac?w=400,1 Kg,,200,1000
+p10,Detergente Líquido,6.50,limpieza,Detergentes,https://images.unsplash.com/photo-1585834057864-15f5cc1145ea?w=400,2 L,Nuevo,60,150

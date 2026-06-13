@@ -8,6 +8,7 @@ export function generateStaticParams() {
   }));
 }
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
-  return <CategoryClient slug={params.slug} />;
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  return <CategoryClient slug={resolvedParams.slug} />;
 }

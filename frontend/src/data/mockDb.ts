@@ -7,6 +7,8 @@ export interface Product {
   image: string;
   labels?: string[]; // e.g. "Oferta", "Nuevo"
   unit: string;
+  stock?: number;
+  warehouseStock?: number;
 }
 
 export const categories = [
