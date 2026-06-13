@@ -1,11 +1,26 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, ShoppingBasket, Search, User, ShoppingCart, ChevronDown, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { useStore } from '@/store/useStore';
 import CartSidebar from './CartSidebar';
 
 export default function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+  const { zone, cart, user } = useStore();
+  
+  // To avoid hydration mismatch, only render state after mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const handleSearch = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   return (
     <>
@@ -32,8 +47,8 @@ export default function Navbar() {
             </div>
             <div className="hidden lg:flex flex-col text-sm border-l pl-4 border-gray-200">
               <span className="text-gray-400 text-xs">Estás comprando en</span>
-              <span className="text-ananas-green font-bold flex items-center gap-1 cursor-pointer hover:text-ananas-dark transition">
-                Caracas <ChevronDown size={14} />
+              <span className="text-ananas-green font-bold flex items-center gap-1 cursor-pointer hover:text-ananas-dark transition" onClick={() => useStore.getState().setZone(null as any)}>
+                {mounted && zone ? zone : 'Seleccionar Zona'} <ChevronDown size={14} />
               </span>
             </div>
           </div>
@@ -41,23 +56,32 @@ export default function Navbar() {
           <div className="flex-1 max-w-2xl mx-8 relative hidden md:block group">
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
               placeholder="¿Qué podemos ayudarte a encontrar hoy?" 
               className="w-full bg-gray-50 border border-gray-200 rounded-full py-3 px-6 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-light focus:border-transparent transition shadow-inner"
             />
-            <Search className="absolute right-5 top-3 text-gray-400 group-hover:text-ananas-green transition" size={20} />
+            <Search className="absolute right-5 top-3 text-gray-400 group-hover:text-ananas-green cursor-pointer transition" size={20} onClick={() => searchQuery.trim() && router.push(`/search?q=${encodeURIComponent(searchQuery)}`)} />
           </div>
 
           <div className="flex items-center gap-6">
-            <User className="text-gray-600 cursor-pointer hover:text-ananas-green transition" size={24} />
+            <div className="flex items-center gap-2 cursor-pointer hover:text-ananas-green transition" onClick={() => router.push('/account')}>
+              <User size={24} className={mounted && user ? "text-ananas-green" : "text-gray-600"} />
+              {mounted && user && <span className="text-sm font-bold hidden lg:block">Nivel {user.clubLevel}</span>}
+            </div>
             <div className="relative cursor-pointer group" onClick={() => setIsCartOpen(true)}>
               <ShoppingCart className="text-gray-600 group-hover:text-ananas-green transition" size={24} />
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white"
-              >
-                3
-              </motion.span>
+              {mounted && cart.length > 0 && (
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  key={cart.length}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white"
+                >
+                  {cart.reduce((acc, item) => acc + item.quantity, 0)}
+                </motion.span>
+              )}
             </div>
             <button className="bg-ananas-green text-white px-5 py-2.5 rounded-full font-bold hover:bg-ananas-dark transition hidden lg:flex items-center gap-2 shadow-lg shadow-ananas-green/20">
               <Download size={18} /> App

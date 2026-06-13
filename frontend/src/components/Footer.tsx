@@ -1,4 +1,5 @@
-import { ShoppingBasket, MapPin, Mail, Phone, Camera, MessageCircle } from 'lucide-react';
+import { ShoppingBasket, Camera, MessageCircle } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -19,20 +20,20 @@ export default function Footer() {
         
         <div>
           <h4 className="font-bold mb-6 text-gray-800 tracking-wide uppercase text-sm">Enlaces Útiles</h4>
-          <ul className="text-sm font-medium text-gray-500 space-y-4">
-            <li><a href="#" className="hover:text-ananas-green transition flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span> Mi Cuenta</a></li>
-            <li><a href="#" className="hover:text-ananas-green transition flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span> Mis Pedidos</a></li>
-            <li><a href="#" className="hover:text-ananas-green transition flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span> Políticas de Envío</a></li>
-            <li><a href="#" className="hover:text-ananas-green transition flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span> Términos y Condiciones</a></li>
+          <ul className="space-y-3">
+            <li><Link href="/como-funciona" className="text-gray-500 hover:text-ananas-green transition font-medium">¿Cómo funciona Ananas?</Link></li>
+            <li><Link href="/pagos" className="text-gray-500 hover:text-ananas-green transition font-medium">Métodos de Pago</Link></li>
+            <li><a href="#" className="text-gray-500 hover:text-ananas-green transition font-medium">Preguntas Frecuentes</a></li>
+            <li><a href="#" className="text-gray-500 hover:text-ananas-green transition font-medium">Contáctanos</a></li>
           </ul>
         </div>
         
         <div>
-          <h4 className="font-bold mb-6 text-gray-800 tracking-wide uppercase text-sm">Contáctanos</h4>
-          <ul className="text-sm font-medium text-gray-500 space-y-4">
-            <li className="flex items-center gap-3"><Phone size={18} className="text-ananas-green bg-ananas-green/10 p-1.5 rounded-full" /> <span className="hover:text-ananas-green cursor-pointer transition">0424-ANANAS</span></li>
-            <li className="flex items-center gap-3"><Mail size={18} className="text-ananas-green bg-ananas-green/10 p-1.5 rounded-full" /> <span className="hover:text-ananas-green cursor-pointer transition">ventas@ananas.com</span></li>
-            <li className="flex items-center gap-3"><MapPin size={18} className="text-ananas-green bg-ananas-green/10 p-1.5 rounded-full" /> Caracas, Venezuela</li>
+          <h4 className="font-bold text-gray-800 mb-6 uppercase tracking-wider text-sm">Tu Cuenta</h4>
+          <ul className="space-y-3">
+            <li><Link href="/account" className="text-gray-500 hover:text-ananas-green transition font-medium">Mi Cuenta</Link></li>
+            <li><Link href="/account#pedidos" className="text-gray-500 hover:text-ananas-green transition font-medium">Mis Pedidos</Link></li>
+            <li><Link href="/cart" className="text-gray-500 hover:text-ananas-green transition font-medium">Carrito de Compras</Link></li>
           </ul>
         </div>
 
