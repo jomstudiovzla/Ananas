@@ -97,8 +97,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/tomates_perita.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 18,
-    "warehouseStock": 388
+    "stock": 88,
+    "warehouseStock": 268
   },
   {
     "id": "p2",
@@ -109,8 +109,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/cebolla_blanca.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 39,
-    "warehouseStock": 163
+    "stock": 56,
+    "warehouseStock": 300
   },
   {
     "id": "p3",
@@ -121,8 +121,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/papa_lavada.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 14,
-    "warehouseStock": 315
+    "stock": 93,
+    "warehouseStock": 332
   },
   {
     "id": "p4",
@@ -133,8 +133,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/zanahoria.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 73,
-    "warehouseStock": 477
+    "stock": 51,
+    "warehouseStock": 147
   },
   {
     "id": "p5",
@@ -145,8 +145,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/pimenton_verde.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 44,
-    "warehouseStock": 427
+    "stock": 18,
+    "warehouseStock": 94
   },
   {
     "id": "p6",
@@ -156,11 +156,9 @@ export const products: Product[] = [
     "subcategory": "Frescos",
     "image": "/Ananas/images/products/lechuga_romana.png",
     "unit": "1 Unidad",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 18,
-    "warehouseStock": 344
+    "labels": [],
+    "stock": 85,
+    "warehouseStock": 67
   },
   {
     "id": "p7",
@@ -171,8 +169,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/platano_maduro.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 13,
-    "warehouseStock": 85
+    "stock": 35,
+    "warehouseStock": 169
   },
   {
     "id": "p8",
@@ -182,9 +180,11 @@ export const products: Product[] = [
     "subcategory": "Enteras",
     "image": "/Ananas/images/products/cambur.png",
     "unit": "1 Kg",
-    "labels": [],
-    "stock": 31,
-    "warehouseStock": 321
+    "labels": [
+      "Nuevo"
+    ],
+    "stock": 25,
+    "warehouseStock": 330
   },
   {
     "id": "p9",
@@ -195,8 +195,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/manzana_gala.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 54,
-    "warehouseStock": 310
+    "stock": 37,
+    "warehouseStock": 104
   },
   {
     "id": "p10",
@@ -207,8 +207,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/naranja.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 35,
-    "warehouseStock": 408
+    "stock": 42,
+    "warehouseStock": 481
   },
   {
     "id": "p11",
@@ -218,9 +218,11 @@ export const products: Product[] = [
     "subcategory": "Enteras",
     "image": "/Ananas/images/products/lechosa.png",
     "unit": "1 Kg",
-    "labels": [],
-    "stock": 43,
-    "warehouseStock": 199
+    "labels": [
+      "Nuevo"
+    ],
+    "stock": 80,
+    "warehouseStock": 224
   },
   {
     "id": "p12",
@@ -230,9 +232,11 @@ export const products: Product[] = [
     "subcategory": "Frescos",
     "image": "/Ananas/images/products/limones.png",
     "unit": "1 Kg",
-    "labels": [],
-    "stock": 61,
-    "warehouseStock": 361
+    "labels": [
+      "Nuevo"
+    ],
+    "stock": 78,
+    "warehouseStock": 240
   },
   {
     "id": "p13",
@@ -243,8 +247,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/pina.png",
     "unit": "1 Unidad",
     "labels": [],
-    "stock": 98,
-    "warehouseStock": 387
+    "stock": 53,
+    "warehouseStock": 262
   },
   {
     "id": "p14",
@@ -255,8 +259,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/aguacate.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 24,
-    "warehouseStock": 370
+    "stock": 89,
+    "warehouseStock": 492
   },
   {
     "id": "p15",
@@ -266,11 +270,9 @@ export const products: Product[] = [
     "subcategory": "Picadas",
     "image": "/Ananas/images/products/frutas_picadas.png",
     "unit": "500g",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 52,
-    "warehouseStock": 240
+    "labels": [],
+    "stock": 53,
+    "warehouseStock": 287
   },
   {
     "id": "p16",
@@ -281,8 +283,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/carne_molida.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 67,
-    "warehouseStock": 256
+    "stock": 93,
+    "warehouseStock": 399
   },
   {
     "id": "p17",
@@ -293,8 +295,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/bistec_ganso.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 40,
-    "warehouseStock": 366
+    "stock": 47,
+    "warehouseStock": 400
   },
   {
     "id": "p18",
@@ -305,8 +307,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/costilla_res.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 37,
-    "warehouseStock": 493
+    "stock": 74,
+    "warehouseStock": 248
   },
   {
     "id": "p19",
@@ -316,11 +318,9 @@ export const products: Product[] = [
     "subcategory": "Pollos",
     "image": "/Ananas/images/products/pechuga_pollo.png",
     "unit": "1 Kg",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 91,
-    "warehouseStock": 74
+    "labels": [],
+    "stock": 52,
+    "warehouseStock": 403
   },
   {
     "id": "p20",
@@ -333,8 +333,8 @@ export const products: Product[] = [
     "labels": [
       "Oferta"
     ],
-    "stock": 48,
-    "warehouseStock": 274
+    "stock": 97,
+    "warehouseStock": 338
   },
   {
     "id": "p21",
@@ -345,8 +345,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/muslos_pollo.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 50,
-    "warehouseStock": 292
+    "stock": 100,
+    "warehouseStock": 97
   },
   {
     "id": "p22",
@@ -357,8 +357,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/alitas_pollo.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 95,
-    "warehouseStock": 102
+    "stock": 25,
+    "warehouseStock": 163
   },
   {
     "id": "p23",
@@ -369,8 +369,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/jamon_cocido.png",
     "unit": "500g",
     "labels": [],
-    "stock": 67,
-    "warehouseStock": 469
+    "stock": 92,
+    "warehouseStock": 308
   },
   {
     "id": "p24",
@@ -381,8 +381,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/queso_amarillo.png",
     "unit": "500g",
     "labels": [],
-    "stock": 63,
-    "warehouseStock": 289
+    "stock": 27,
+    "warehouseStock": 274
   },
   {
     "id": "p25",
@@ -393,8 +393,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/queso_blanco.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 67,
-    "warehouseStock": 499
+    "stock": 87,
+    "warehouseStock": 396
   },
   {
     "id": "p26",
@@ -405,8 +405,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/salchichas.png",
     "unit": "1 Paquete",
     "labels": [],
-    "stock": 89,
-    "warehouseStock": 351
+    "stock": 96,
+    "warehouseStock": 220
   },
   {
     "id": "p27",
@@ -417,8 +417,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/tocino.png",
     "unit": "250g",
     "labels": [],
-    "stock": 20,
-    "warehouseStock": 253
+    "stock": 98,
+    "warehouseStock": 112
   },
   {
     "id": "p28",
@@ -429,8 +429,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/chorizo.png",
     "unit": "500g",
     "labels": [],
-    "stock": 88,
-    "warehouseStock": 313
+    "stock": 69,
+    "warehouseStock": 488
   },
   {
     "id": "p29",
@@ -440,11 +440,9 @@ export const products: Product[] = [
     "subcategory": "Embutidos",
     "image": "/Ananas/images/products/queso_guayanes.png",
     "unit": "500g",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 77,
-    "warehouseStock": 315
+    "labels": [],
+    "stock": 83,
+    "warehouseStock": 288
   },
   {
     "id": "p30",
@@ -454,11 +452,9 @@ export const products: Product[] = [
     "subcategory": "Pollos",
     "image": "/Ananas/images/products/nuggets.png",
     "unit": "1 Paquete",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 75,
-    "warehouseStock": 161
+    "labels": [],
+    "stock": 78,
+    "warehouseStock": 367
   },
   {
     "id": "p31",
@@ -469,8 +465,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/coca_cola.png",
     "unit": "2 L",
     "labels": [],
-    "stock": 71,
-    "warehouseStock": 60
+    "stock": 93,
+    "warehouseStock": 331
   },
   {
     "id": "p32",
@@ -480,9 +476,11 @@ export const products: Product[] = [
     "subcategory": "Refrescos",
     "image": "/Ananas/images/products/pepsi.png",
     "unit": "2 L",
-    "labels": [],
-    "stock": 52,
-    "warehouseStock": 441
+    "labels": [
+      "Oferta"
+    ],
+    "stock": 14,
+    "warehouseStock": 481
   },
   {
     "id": "p33",
@@ -492,11 +490,9 @@ export const products: Product[] = [
     "subcategory": "Refrescos",
     "image": "/Ananas/images/products/chinotto.png",
     "unit": "2 L",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 77,
-    "warehouseStock": 208
+    "labels": [],
+    "stock": 14,
+    "warehouseStock": 356
   },
   {
     "id": "p34",
@@ -507,8 +503,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/frescolita.png",
     "unit": "2 L",
     "labels": [],
-    "stock": 48,
-    "warehouseStock": 487
+    "stock": 35,
+    "warehouseStock": 442
   },
   {
     "id": "p35",
@@ -519,8 +515,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/maltin.png",
     "unit": "1.5 L",
     "labels": [],
-    "stock": 92,
-    "warehouseStock": 182
+    "stock": 29,
+    "warehouseStock": 235
   },
   {
     "id": "p36",
@@ -533,8 +529,8 @@ export const products: Product[] = [
     "labels": [
       "Nuevo"
     ],
-    "stock": 57,
-    "warehouseStock": 354
+    "stock": 16,
+    "warehouseStock": 52
   },
   {
     "id": "p37",
@@ -545,8 +541,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/arroz_primor.png",
     "unit": "1 Kg",
     "labels": [],
-    "stock": 57,
-    "warehouseStock": 203
+    "stock": 58,
+    "warehouseStock": 433
   },
   {
     "id": "p38",
@@ -556,9 +552,11 @@ export const products: Product[] = [
     "subcategory": "Pasta",
     "image": "/Ananas/images/products/pasta_capri.png",
     "unit": "1 Kg",
-    "labels": [],
-    "stock": 16,
-    "warehouseStock": 52
+    "labels": [
+      "Oferta"
+    ],
+    "stock": 72,
+    "warehouseStock": 143
   },
   {
     "id": "p39",
@@ -568,11 +566,9 @@ export const products: Product[] = [
     "subcategory": "Arroz",
     "image": "/Ananas/images/products/harina_pan.png",
     "unit": "1 Kg",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 23,
-    "warehouseStock": 338
+    "labels": [],
+    "stock": 79,
+    "warehouseStock": 66
   },
   {
     "id": "p40",
@@ -582,9 +578,11 @@ export const products: Product[] = [
     "subcategory": "Enlatados",
     "image": "/Ananas/images/products/caraotas.png",
     "unit": "500g",
-    "labels": [],
+    "labels": [
+      "Nuevo"
+    ],
     "stock": 98,
-    "warehouseStock": 168
+    "warehouseStock": 471
   },
   {
     "id": "p41",
@@ -594,11 +592,9 @@ export const products: Product[] = [
     "subcategory": "Enlatados",
     "image": "/Ananas/images/products/lentejas.png",
     "unit": "500g",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 70,
-    "warehouseStock": 349
+    "labels": [],
+    "stock": 39,
+    "warehouseStock": 495
   },
   {
     "id": "p42",
@@ -609,8 +605,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/atun_aceite.png",
     "unit": "140g",
     "labels": [],
-    "stock": 44,
-    "warehouseStock": 355
+    "stock": 92,
+    "warehouseStock": 192
   },
   {
     "id": "p43",
@@ -621,8 +617,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/atun_agua.png",
     "unit": "140g",
     "labels": [],
-    "stock": 77,
-    "warehouseStock": 294
+    "stock": 29,
+    "warehouseStock": 139
   },
   {
     "id": "p44",
@@ -632,11 +628,9 @@ export const products: Product[] = [
     "subcategory": "Enlatados",
     "image": "/Ananas/images/products/maiz_lata.png",
     "unit": "300g",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 96,
-    "warehouseStock": 82
+    "labels": [],
+    "stock": 62,
+    "warehouseStock": 148
   },
   {
     "id": "p45",
@@ -647,8 +641,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/aceite_maiz.png",
     "unit": "1 Litro",
     "labels": [],
-    "stock": 98,
-    "warehouseStock": 252
+    "stock": 19,
+    "warehouseStock": 341
   },
   {
     "id": "p46",
@@ -659,8 +653,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/jabon_protex.png",
     "unit": "3 Unidades",
     "labels": [],
-    "stock": 50,
-    "warehouseStock": 176
+    "stock": 60,
+    "warehouseStock": 484
   },
   {
     "id": "p47",
@@ -670,11 +664,9 @@ export const products: Product[] = [
     "subcategory": "Aseo",
     "image": "/Ananas/images/products/desodorante.png",
     "unit": "50ml",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 65,
-    "warehouseStock": 129
+    "labels": [],
+    "stock": 60,
+    "warehouseStock": 127
   },
   {
     "id": "p48",
@@ -685,8 +677,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/crema_dental.png",
     "unit": "100g",
     "labels": [],
-    "stock": 21,
-    "warehouseStock": 143
+    "stock": 46,
+    "warehouseStock": 64
   },
   {
     "id": "p49",
@@ -697,8 +689,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/shampoo.png",
     "unit": "400ml",
     "labels": [],
-    "stock": 92,
-    "warehouseStock": 204
+    "stock": 49,
+    "warehouseStock": 472
   },
   {
     "id": "p50",
@@ -709,8 +701,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/papel_higienico.png",
     "unit": "4 Rollos",
     "labels": [],
-    "stock": 51,
-    "warehouseStock": 138
+    "stock": 87,
+    "warehouseStock": 180
   },
   {
     "id": "p51",
@@ -721,8 +713,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/toallas_sanitarias.png",
     "unit": "10 Unidades",
     "labels": [],
-    "stock": 82,
-    "warehouseStock": 312
+    "stock": 41,
+    "warehouseStock": 190
   },
   {
     "id": "p52",
@@ -733,8 +725,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/maquina_afeitar.png",
     "unit": "2 Unidades",
     "labels": [],
-    "stock": 70,
-    "warehouseStock": 380
+    "stock": 20,
+    "warehouseStock": 229
   },
   {
     "id": "p53",
@@ -745,8 +737,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/crema_corporal.png",
     "unit": "400ml",
     "labels": [],
-    "stock": 34,
-    "warehouseStock": 268
+    "stock": 93,
+    "warehouseStock": 289
   },
   {
     "id": "p54",
@@ -757,8 +749,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/algodon.png",
     "unit": "100g",
     "labels": [],
-    "stock": 100,
-    "warehouseStock": 411
+    "stock": 94,
+    "warehouseStock": 337
   },
   {
     "id": "p55",
@@ -769,8 +761,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/hisopos.png",
     "unit": "100 Unidades",
     "labels": [],
-    "stock": 19,
-    "warehouseStock": 374
+    "stock": 29,
+    "warehouseStock": 280
   },
   {
     "id": "p56",
@@ -780,11 +772,9 @@ export const products: Product[] = [
     "subcategory": "Farmacia",
     "image": "/Ananas/images/products/alcohol.png",
     "unit": "250ml",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 92,
-    "warehouseStock": 107
+    "labels": [],
+    "stock": 21,
+    "warehouseStock": 271
   },
   {
     "id": "p57",
@@ -795,8 +785,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/agua_oxigenada.png",
     "unit": "100ml",
     "labels": [],
-    "stock": 94,
-    "warehouseStock": 422
+    "stock": 69,
+    "warehouseStock": 157
   },
   {
     "id": "p58",
@@ -807,8 +797,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/curitas.png",
     "unit": "Caja",
     "labels": [],
-    "stock": 70,
-    "warehouseStock": 102
+    "stock": 73,
+    "warehouseStock": 74
   },
   {
     "id": "p59",
@@ -818,11 +808,9 @@ export const products: Product[] = [
     "subcategory": "Detergentes",
     "image": "/Ananas/images/products/detergente_liquido.png",
     "unit": "2 L",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 76,
-    "warehouseStock": 100
+    "labels": [],
+    "stock": 40,
+    "warehouseStock": 171
   },
   {
     "id": "p60",
@@ -832,11 +820,9 @@ export const products: Product[] = [
     "subcategory": "Detergentes",
     "image": "/Ananas/images/products/detergente_polvo.png",
     "unit": "1 Kg",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 75,
-    "warehouseStock": 459
+    "labels": [],
+    "stock": 44,
+    "warehouseStock": 173
   },
   {
     "id": "p61",
@@ -847,8 +833,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/suavizante.png",
     "unit": "1 L",
     "labels": [],
-    "stock": 60,
-    "warehouseStock": 93
+    "stock": 50,
+    "warehouseStock": 70
   },
   {
     "id": "p62",
@@ -859,8 +845,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/lavaplatos_liquido.png",
     "unit": "500ml",
     "labels": [],
-    "stock": 96,
-    "warehouseStock": 369
+    "stock": 43,
+    "warehouseStock": 475
   },
   {
     "id": "p63",
@@ -871,8 +857,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/lavaplatos_crema.png",
     "unit": "250g",
     "labels": [],
-    "stock": 98,
-    "warehouseStock": 364
+    "stock": 13,
+    "warehouseStock": 252
   },
   {
     "id": "p64",
@@ -883,8 +869,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/cloro.png",
     "unit": "1 L",
     "labels": [],
-    "stock": 55,
-    "warehouseStock": 206
+    "stock": 99,
+    "warehouseStock": 136
   },
   {
     "id": "p65",
@@ -895,8 +881,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/desinfectante.png",
     "unit": "1 L",
     "labels": [],
-    "stock": 24,
-    "warehouseStock": 321
+    "stock": 50,
+    "warehouseStock": 487
   },
   {
     "id": "p66",
@@ -907,8 +893,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/esponja.png",
     "unit": "3 Unidades",
     "labels": [],
-    "stock": 21,
-    "warehouseStock": 65
+    "stock": 36,
+    "warehouseStock": 161
   },
   {
     "id": "p67",
@@ -919,8 +905,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/mopa.png",
     "unit": "1 Unidad",
     "labels": [],
-    "stock": 78,
-    "warehouseStock": 276
+    "stock": 44,
+    "warehouseStock": 253
   },
   {
     "id": "p68",
@@ -930,9 +916,11 @@ export const products: Product[] = [
     "subcategory": "Accesorios",
     "image": "/Ananas/images/products/escoba.png",
     "unit": "1 Unidad",
-    "labels": [],
-    "stock": 47,
-    "warehouseStock": 323
+    "labels": [
+      "Nuevo"
+    ],
+    "stock": 87,
+    "warehouseStock": 113
   },
   {
     "id": "p69",
@@ -943,8 +931,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/coleto.png",
     "unit": "1 Unidad",
     "labels": [],
-    "stock": 92,
-    "warehouseStock": 161
+    "stock": 48,
+    "warehouseStock": 175
   },
   {
     "id": "p70",
@@ -954,11 +942,9 @@ export const products: Product[] = [
     "subcategory": "Accesorios",
     "image": "/Ananas/images/products/bolsas_basura.png",
     "unit": "10 Unidades",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 100,
-    "warehouseStock": 421
+    "labels": [],
+    "stock": 92,
+    "warehouseStock": 387
   },
   {
     "id": "p71",
@@ -968,11 +954,9 @@ export const products: Product[] = [
     "subcategory": "Cervezas",
     "image": "/Ananas/images/products/cerveza_pilsen.png",
     "unit": "Caja 36",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 96,
-    "warehouseStock": 235
+    "labels": [],
+    "stock": 14,
+    "warehouseStock": 224
   },
   {
     "id": "p72",
@@ -983,8 +967,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/cerveza_light.png",
     "unit": "Caja 36",
     "labels": [],
-    "stock": 79,
-    "warehouseStock": 144
+    "stock": 65,
+    "warehouseStock": 497
   },
   {
     "id": "p73",
@@ -995,8 +979,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/cerveza_solera.png",
     "unit": "6 Pack",
     "labels": [],
-    "stock": 15,
-    "warehouseStock": 238
+    "stock": 84,
+    "warehouseStock": 205
   },
   {
     "id": "p74",
@@ -1007,8 +991,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/cerveza_zulia.png",
     "unit": "6 Pack",
     "labels": [],
-    "stock": 33,
-    "warehouseStock": 314
+    "stock": 41,
+    "warehouseStock": 325
   },
   {
     "id": "p75",
@@ -1019,8 +1003,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/ron_teresa.png",
     "unit": "750ml",
     "labels": [],
-    "stock": 14,
-    "warehouseStock": 241
+    "stock": 93,
+    "warehouseStock": 56
   },
   {
     "id": "p76",
@@ -1030,11 +1014,9 @@ export const products: Product[] = [
     "subcategory": "Destilados",
     "image": "/Ananas/images/products/ron_cacique.png",
     "unit": "750ml",
-    "labels": [
-      "Nuevo"
-    ],
-    "stock": 24,
-    "warehouseStock": 415
+    "labels": [],
+    "stock": 58,
+    "warehouseStock": 261
   },
   {
     "id": "p77",
@@ -1045,8 +1027,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/ron_pampero.png",
     "unit": "750ml",
     "labels": [],
-    "stock": 29,
-    "warehouseStock": 160
+    "stock": 61,
+    "warehouseStock": 281
   },
   {
     "id": "p78",
@@ -1057,8 +1039,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/ron_diplomatico.png",
     "unit": "750ml",
     "labels": [],
-    "stock": 34,
-    "warehouseStock": 338
+    "stock": 15,
+    "warehouseStock": 226
   },
   {
     "id": "p79",
@@ -1069,8 +1051,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/whisky_buchanans.png",
     "unit": "750ml",
     "labels": [],
-    "stock": 57,
-    "warehouseStock": 54
+    "stock": 80,
+    "warehouseStock": 476
   },
   {
     "id": "p80",
@@ -1080,11 +1062,9 @@ export const products: Product[] = [
     "subcategory": "Destilados",
     "image": "/Ananas/images/products/whisky_parr.png",
     "unit": "750ml",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 83,
-    "warehouseStock": 313
+    "labels": [],
+    "stock": 84,
+    "warehouseStock": 132
   },
   {
     "id": "p81",
@@ -1094,11 +1074,9 @@ export const products: Product[] = [
     "subcategory": "Destilados",
     "image": "/Ananas/images/products/vodka.png",
     "unit": "750ml",
-    "labels": [
-      "Oferta"
-    ],
-    "stock": 58,
-    "warehouseStock": 260
+    "labels": [],
+    "stock": 52,
+    "warehouseStock": 470
   },
   {
     "id": "p82",
@@ -1109,10 +1087,10 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/vino_tinto.png",
     "unit": "750ml",
     "labels": [
-      "Oferta"
+      "Nuevo"
     ],
-    "stock": 36,
-    "warehouseStock": 81
+    "stock": 58,
+    "warehouseStock": 479
   },
   {
     "id": "p83",
@@ -1123,8 +1101,8 @@ export const products: Product[] = [
     "image": "/Ananas/images/products/vino_blanco.png",
     "unit": "750ml",
     "labels": [],
-    "stock": 82,
-    "warehouseStock": 108
+    "stock": 23,
+    "warehouseStock": 73
   }
 ];
 
