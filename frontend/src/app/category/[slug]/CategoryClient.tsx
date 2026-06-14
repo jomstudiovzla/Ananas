@@ -28,15 +28,19 @@ export default function CategoryClient({ slug }: { slug: string }) {
 
   return (
     <div className="max-w-7xl mx-auto py-12 px-4">
-      <div className={`p-8 rounded-3xl mb-12 text-white ${category.color} shadow-lg shadow-gray-200`}>
-        <h1 className="text-4xl font-black mb-2">{category.name}</h1>
-        <p className="font-medium opacity-90">Explora lo mejor de nuestra selección</p>
+      <div className={`p-8 rounded-3xl mb-12 ${category.color} shadow-lg shadow-gray-100`}>
+        <h1 className="text-4xl font-black mb-2 text-gray-900">{category.name}</h1>
+        <p className="font-medium text-gray-700 opacity-90">Explora lo mejor de nuestra selección</p>
         
         {category.subcategories && category.subcategories.length > 0 && (
           <div className="flex gap-3 mt-6 overflow-x-auto pb-2">
             <span 
               onClick={() => setActiveSubcategory(null)}
-              className={`px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer transition ${activeSubcategory === null ? 'bg-white text-gray-900' : 'bg-white/20 hover:bg-white/30'}`}
+              className={`px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer transition ${
+                activeSubcategory === null 
+                  ? 'bg-ananas-green text-white shadow-md' 
+                  : 'bg-white/80 text-gray-700 border border-gray-200/60 hover:bg-white hover:text-gray-900'
+              }`}
             >
               Todos
             </span>
@@ -44,7 +48,11 @@ export default function CategoryClient({ slug }: { slug: string }) {
               <span 
                 key={sub} 
                 onClick={() => setActiveSubcategory(sub)}
-                className={`px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer transition ${activeSubcategory === sub ? 'bg-white text-gray-900' : 'bg-white/20 hover:bg-white/30'}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer transition ${
+                  activeSubcategory === sub 
+                    ? 'bg-ananas-green text-white shadow-md' 
+                    : 'bg-white/80 text-gray-700 border border-gray-200/60 hover:bg-white hover:text-gray-900'
+                }`}
               >
                 {sub}
               </span>

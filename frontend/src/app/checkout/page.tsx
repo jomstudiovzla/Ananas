@@ -10,7 +10,7 @@ export default function CheckoutPage() {
   const { cart, clearCart, user, placeOrder, deductPoints, addPoints } = useStore();
   const [mounted, setMounted] = useState(false);
   const [shippingMethod, setShippingMethod] = useState<'delivery' | 'pickup'>('delivery');
-  const [paymentMethod, setPaymentMethod] = useState<'pagomovil' | 'zelle' | 'cash'>('pagomovil');
+  const [paymentMethod, setPaymentMethod] = useState<'pagomovil' | 'zelle' | 'cash' | 'creditcard' | 'paypal' | 'binance' | 'transferencia'>('pagomovil');
   const [usePoints, setUsePoints] = useState(false);
   const [form, setForm] = useState({
     name: '',
@@ -19,7 +19,11 @@ export default function CheckoutPage() {
     deliveryDate: '',
     deliveryTime: '09:00 - 12:00',
     reference: '',
-    zellePayer: ''
+    zellePayer: '',
+    cardNumber: '',
+    cardExpiry: '',
+    cardCvv: '',
+    bankName: 'Mercantil'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
@@ -33,7 +37,8 @@ export default function CheckoutPage() {
     shippingMethod: 'delivery' as 'delivery' | 'pickup',
     address: '',
     deliveryDate: '',
-    deliveryTime: ''
+    deliveryTime: '',
+    status: 'Procesando' as 'Procesando' | 'Listo para retirar' | 'En camino' | 'Entregado' | 'Cancelado' | 'En revisión' | 'Facturado'
   });
   
   const router = useRouter();
@@ -85,6 +90,13 @@ export default function CheckoutPage() {
     const calculatedTotal = subtotal + deliveryFee - calculatedDiscount;
     const calculatedPointsEarned = Math.round(calculatedTotal);
 
+    let orderStatus: 'Facturado' | 'En revisión' | 'Procesando' = 'Procesando';
+    if (['creditcard', 'paypal', 'binance'].includes(paymentMethod)) {
+      orderStatus = 'Facturado';
+    } else if (['pagomovil', 'zelle', 'transferencia'].includes(paymentMethod)) {
+      orderStatus = 'En revisión';
+    }
+
     // Save summary before clearing cart
     setSummary({
       subtotal,
@@ -95,7 +107,8 @@ export default function CheckoutPage() {
       shippingMethod,
       address: shippingMethod === 'delivery' ? form.address : '',
       deliveryDate: form.deliveryDate,
-      deliveryTime: form.deliveryTime
+      deliveryTime: form.deliveryTime,
+      status: orderStatus
     });
 
     // Simulate API call to process checkout
@@ -117,7 +130,7 @@ export default function CheckoutPage() {
         address: shippingMethod === 'delivery' ? form.address : undefined,
         deliveryDate: form.deliveryDate,
         deliveryTime: form.deliveryTime,
-        status: 'Procesando'
+        status: orderStatus
       });
 
       // Deduct used points
@@ -145,8 +158,16 @@ export default function CheckoutPage() {
           <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 text-ananas-green">
             <CheckCircle2 size={48} />
           </div>
-          <h1 className="text-3xl font-black text-gray-800 mb-2">¡Pedido Confirmado!</h1>
-          <p className="text-gray-500 font-medium mb-6">Hemos recibido tu orden con éxito y estamos preparándola.</p>
+          <h1 className="text-3xl font-black text-gray-800 mb-2">
+            {summary.status === 'Facturado' ? '¡Pago Aprobado!' : '¡Pedido Confirmado!'}
+          </h1>
+          <p className="text-gray-500 font-medium mb-6">
+            {summary.status === 'Facturado' 
+              ? 'Tu pago automático se ha procesado con éxito. Preparando despacho.' 
+              : summary.status === 'En revisión' 
+              ? 'Tu referencia de pago manual está registrada. Validaremos tu pago pronto.' 
+              : 'Hemos recibido tu orden con éxito y realizas el pago en efectivo al recibir.'}
+          </p>
           
           <div className="bg-gray-50 rounded-2xl p-6 text-left border border-gray-100 mb-8 space-y-4">
             <div className="flex justify-between border-b border-gray-200 pb-3">
@@ -351,7 +372,7 @@ export default function CheckoutPage() {
               <CreditCard size={22} className="text-ananas-green" /> 3. Método de Pago
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <button
                 type="button"
                 onClick={() => setPaymentMethod('pagomovil')}
@@ -359,7 +380,7 @@ export default function CheckoutPage() {
                   paymentMethod === 'pagomovil' ? 'border-ananas-green bg-green-50/50 font-bold' : 'border-gray-200'
                 }`}
               >
-                Pago Móvil
+                📱 Pago Móvil
               </button>
               <button
                 type="button"
@@ -368,16 +389,52 @@ export default function CheckoutPage() {
                   paymentMethod === 'zelle' ? 'border-ananas-green bg-green-50/50 font-bold' : 'border-gray-200'
                 }`}
               >
-                Zelle
+                🟣 Zelle
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('transferencia')}
+                className={`p-4 rounded-xl border text-center transition-all ${
+                  paymentMethod === 'transferencia' ? 'border-ananas-green bg-green-50/50 font-bold' : 'border-gray-200'
+                }`}
+              >
+                🏦 Transferencia
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('creditcard')}
+                className={`p-4 rounded-xl border text-center transition-all ${
+                  paymentMethod === 'creditcard' ? 'border-ananas-green bg-green-50/50 font-bold' : 'border-gray-200'
+                }`}
+              >
+                💳 Tarjeta Crédito
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('paypal')}
+                className={`p-4 rounded-xl border text-center transition-all ${
+                  paymentMethod === 'paypal' ? 'border-ananas-green bg-green-50/50 font-bold' : 'border-gray-200'
+                }`}
+              >
+                🔵 PayPal
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('binance')}
+                className={`p-4 rounded-xl border text-center transition-all ${
+                  paymentMethod === 'binance' ? 'border-ananas-green bg-green-50/50 font-bold' : 'border-gray-200'
+                }`}
+              >
+                🟡 Binance Pay
               </button>
               <button
                 type="button"
                 onClick={() => setPaymentMethod('cash')}
-                className={`p-4 rounded-xl border text-center transition-all ${
+                className={`p-4 rounded-xl border text-center transition-all col-span-2 ${
                   paymentMethod === 'cash' ? 'border-ananas-green bg-green-50/50 font-bold' : 'border-gray-200'
                 }`}
               >
-                Efectivo / Cash
+                💵 Efectivo / Cash
               </button>
             </div>
 
@@ -424,6 +481,101 @@ export default function CheckoutPage() {
                       placeholder="Ej. pagador@ejemplo.com"
                       className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 font-medium focus:outline-none focus:border-ananas-green transition"
                     />
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'transferencia' && (
+                <div className="space-y-4">
+                  <div className="text-sm text-gray-600 font-medium">
+                    <p className="font-bold text-gray-800 mb-2">Instrucciones de Transferencia Bancaria:</p>
+                    <p>Banco: <strong className="text-gray-800">Banco Mercantil (0105)</strong></p>
+                    <p>Cuenta: <strong className="text-gray-800">0105-0012-34-5678901234</strong></p>
+                    <p>Beneficiario: <strong className="text-gray-800">Ananas Frutería C.A.</strong></p>
+                    <p>RIF: <strong className="text-gray-800">J-12345678-9</strong></p>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 mb-2">Número de Referencia de Transferencia</label>
+                    <input 
+                      type="text" 
+                      name="reference"
+                      required={paymentMethod === 'transferencia'}
+                      value={form.reference}
+                      onChange={handleInputChange}
+                      placeholder="Ej. 104829"
+                      className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 font-medium focus:outline-none focus:border-ananas-green transition"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'creditcard' && (
+                <div className="space-y-4">
+                  <p className="font-bold text-gray-800 text-sm">Pago con Tarjeta de Crédito (Adaptador Stripe):</p>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 mb-1">Número de Tarjeta</label>
+                      <input 
+                        type="text" 
+                        name="cardNumber"
+                        required={paymentMethod === 'creditcard'}
+                        value={form.cardNumber}
+                        onChange={handleInputChange}
+                        placeholder="4242 4242 4242 4242"
+                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 font-medium focus:outline-none focus:border-ananas-green transition"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 mb-1">Vencimiento</label>
+                        <input 
+                          type="text" 
+                          name="cardExpiry"
+                          required={paymentMethod === 'creditcard'}
+                          value={form.cardExpiry}
+                          onChange={handleInputChange}
+                          placeholder="MM/AA"
+                          className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 font-medium focus:outline-none focus:border-ananas-green transition"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 mb-1">CVC</label>
+                        <input 
+                          type="text" 
+                          name="cardCvv"
+                          required={paymentMethod === 'creditcard'}
+                          value={form.cardCvv}
+                          onChange={handleInputChange}
+                          placeholder="123"
+                          className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 font-medium focus:outline-none focus:border-ananas-green transition"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'paypal' && (
+                <div className="space-y-4 text-center py-4">
+                  <div className="text-sm text-gray-600 font-medium mb-3">
+                    <p className="font-bold text-gray-800 mb-2">Pago Seguro vía PayPal:</p>
+                    <p>Serás redirigido a la ventana de PayPal para confirmar el cargo de <strong className="text-ananas-green">${total.toFixed(2)}</strong>.</p>
+                  </div>
+                  <div className="bg-[#FFC439] hover:bg-[#F2B522] text-blue-900 py-3 px-6 rounded-xl font-black transition inline-flex items-center gap-2 cursor-pointer shadow-sm">
+                    PayPal checkout
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'binance' && (
+                <div className="space-y-4 text-center py-4">
+                  <div className="text-sm text-gray-600 font-medium mb-3">
+                    <p className="font-bold text-gray-800 mb-2">Binance Pay (Cripto):</p>
+                    <p>Escanea el código QR de nuestra billetera para transferir desde la Binance App.</p>
+                    <p className="text-xs text-gray-400">ID de Comercio: 91840194</p>
+                  </div>
+                  <div className="w-32 h-32 bg-yellow-100/50 border border-yellow-200 rounded-2xl mx-auto flex items-center justify-center text-yellow-600 text-xs font-bold font-mono p-2">
+                    [Binance QR]
                   </div>
                 </div>
               )}

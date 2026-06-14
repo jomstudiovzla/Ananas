@@ -29,11 +29,11 @@ export interface Order {
   discount: number;
   total: number;
   shippingMethod: 'delivery' | 'pickup';
-  paymentMethod: 'pagomovil' | 'zelle' | 'cash';
+  paymentMethod: 'pagomovil' | 'zelle' | 'cash' | 'creditcard' | 'paypal' | 'binance' | 'transferencia';
   address?: string;
   deliveryDate: string;
   deliveryTime: string;
-  status: 'Procesando' | 'Listo para retirar' | 'En camino' | 'Entregado' | 'Cancelado';
+  status: 'Procesando' | 'Listo para retirar' | 'En camino' | 'Entregado' | 'Cancelado' | 'En revisión' | 'Facturado';
 }
 
 interface AppState {
