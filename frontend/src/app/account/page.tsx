@@ -1,14 +1,15 @@
 "use client";
-import { useStore } from '@/store/useStore';
+import { useStore, Order } from '@/store/useStore';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LogOut, Package, Star, Crown, ChevronRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AccountPage() {
-  const { user, logout } = useStore();
+  const { user, logout, orders } = useStore();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -111,24 +112,163 @@ export default function AccountPage() {
         <div id="pedidos" className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
           <h3 className="text-2xl font-black text-gray-800 mb-6">Pedidos Recientes</h3>
           
-          <div className="space-y-4">
-            {[1, 2].map(order => (
-              <div key={order} className="flex flex-col sm:flex-row sm:items-center justify-between p-5 border border-gray-100 rounded-2xl hover:border-ananas-green transition group">
-                <div>
-                  <p className="text-sm font-bold text-gray-400 mb-1">Pedido #AN-00{order}83</p>
-                  <p className="font-bold text-gray-800 mb-1">12 de Octubre, 2026</p>
-                  <p className="text-sm text-gray-500">4 artículos • Entregado</p>
+          {orders.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              <p className="font-medium text-gray-500 mb-2">Aún no has realizado ningún pedido.</p>
+              <Link href="/" className="text-ananas-green font-bold hover:underline mt-2 inline-block">
+                Comenzar a comprar
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {orders.map(order => (
+                <div key={order.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-5 border border-gray-100 rounded-2xl hover:border-ananas-green transition group">
+                  <div>
+                    <p className="text-sm font-bold text-gray-400 mb-1">Pedido #{order.id}</p>
+                    <p className="font-bold text-gray-800 mb-1">{order.date}</p>
+                    <p className="text-sm text-gray-500">{order.items.length} {order.items.length === 1 ? 'artículo' : 'artículos'} • {order.status}</p>
+                  </div>
+                  <div className="mt-4 sm:mt-0 flex items-center gap-4">
+                    <span className="font-black text-xl text-gray-800">${order.total.toFixed(2)}</span>
+                    <button 
+                      onClick={() => setSelectedOrder(order)}
+                      className="text-ananas-green font-bold bg-ananas-green/10 px-4 py-2 rounded-lg group-hover:bg-ananas-green group-hover:text-white transition"
+                    >
+                      Ver detalle
+                    </button>
+                  </div>
                 </div>
-                <div className="mt-4 sm:mt-0 flex items-center gap-4">
-                  <span className="font-black text-xl text-gray-800">$24.50</span>
-                  <button className="text-ananas-green font-bold bg-ananas-green/10 px-4 py-2 rounded-lg group-hover:bg-ananas-green group-hover:text-white transition">Ver detalle</button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
       </div>
+
+      {/* Dynamic Order Details Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-xl w-full border border-gray-100 shadow-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setSelectedOrder(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition"
+            >
+              ✕
+            </button>
+            <h3 className="text-2xl font-black text-gray-800 mb-2">Detalle del Pedido</h3>
+            <p className="text-sm font-bold text-ananas-green mb-6">#{selectedOrder.id}</p>
+
+            <div className="space-y-6">
+              {/* Order Status */}
+              <div className="bg-green-50/50 border border-green-100 rounded-2xl p-4 flex justify-between items-center">
+                <div>
+                  <span className="text-xs font-bold text-gray-400 block uppercase">Estado del Pedido</span>
+                  <span className="font-black text-green-700 text-lg">{selectedOrder.status}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs font-bold text-gray-400 block uppercase">Fecha de Orden</span>
+                  <span className="font-bold text-gray-700 text-sm">{selectedOrder.date}</span>
+                </div>
+              </div>
+
+              {/* Items List */}
+              <div className="space-y-3">
+                <h4 className="font-bold text-gray-700 text-sm uppercase tracking-wider">Artículos</h4>
+                <div className="space-y-3 max-h-[160px] overflow-y-auto pr-1">
+                  {selectedOrder.items.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between border-b border-gray-50 pb-2">
+                      <div className="flex items-center gap-3">
+                        <img 
+                          src={item.image} 
+                          alt={item.name} 
+                          className="w-10 h-10 object-contain rounded-lg bg-gray-50 border border-gray-100" 
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/Ananas/images/products/placeholder.png';
+                          }}
+                        />
+                        <div>
+                          <p className="font-bold text-gray-800 text-sm">{item.name}</p>
+                          <p className="text-xs text-gray-500">
+                            {item.quantity} x ${item.price.toFixed(2)} / {item.unit}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="font-bold text-gray-800 text-sm">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Delivery Info */}
+              <div className="bg-gray-50 rounded-2xl p-4 space-y-2 text-sm">
+                <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-2">Detalles de Entrega</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-xs text-gray-400 block">Método</span>
+                    <span className="font-bold text-gray-800 capitalize">
+                      {selectedOrder.shippingMethod === 'delivery' ? 'Delivery a domicilio' : 'Retiro en Tienda'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-400 block">Horario</span>
+                    <span className="font-bold text-gray-800">
+                      {selectedOrder.deliveryDate} ({selectedOrder.deliveryTime})
+                    </span>
+                  </div>
+                </div>
+                {selectedOrder.shippingMethod === 'delivery' && selectedOrder.address && (
+                  <div className="pt-2 border-t border-gray-200 mt-2">
+                    <span className="text-xs text-gray-400 block">Dirección</span>
+                    <span className="font-bold text-gray-800">{selectedOrder.address}, San Luis, El Cafetal</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Payment Method */}
+              <div className="bg-gray-50 rounded-2xl p-4 text-sm">
+                <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-2">Método de Pago</h4>
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-gray-800 capitalize">{selectedOrder.paymentMethod}</span>
+                  <span className="text-xs text-gray-500 font-medium">Sede: Caracas El Este</span>
+                </div>
+              </div>
+
+              {/* Financial Breakdowns */}
+              <div className="border-t border-gray-200 pt-4 space-y-2 text-sm font-medium text-gray-600">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span className="font-bold text-gray-800">${selectedOrder.subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Costo de Envío</span>
+                  <span className="font-bold text-gray-800">
+                    {selectedOrder.deliveryFee > 0 ? `$${selectedOrder.deliveryFee.toFixed(2)}` : 'Gratis'}
+                  </span>
+                </div>
+                {selectedOrder.discount > 0 && (
+                  <div className="flex justify-between text-red-500 font-semibold">
+                    <span>Descuento Club Ananas</span>
+                    <span className="font-bold">-${selectedOrder.discount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-lg font-black text-gray-800 pt-2 border-t border-gray-200">
+                  <span>Total</span>
+                  <span className="text-ananas-green text-xl">${selectedOrder.total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedOrder(null)}
+                className="w-full bg-ananas-green text-white py-3.5 rounded-xl font-bold hover:bg-ananas-dark transition"
+              >
+                Cerrar Detalle
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

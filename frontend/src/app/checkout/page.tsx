@@ -7,10 +7,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function CheckoutPage() {
-  const { cart, clearCart, user } = useStore();
+  const { cart, clearCart, user, placeOrder, deductPoints, addPoints } = useStore();
   const [mounted, setMounted] = useState(false);
   const [shippingMethod, setShippingMethod] = useState<'delivery' | 'pickup'>('delivery');
   const [paymentMethod, setPaymentMethod] = useState<'pagomovil' | 'zelle' | 'cash'>('pagomovil');
+  const [usePoints, setUsePoints] = useState(false);
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -23,6 +24,17 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderId, setOrderId] = useState('');
+  const [summary, setSummary] = useState({
+    subtotal: 0,
+    deliveryFee: 0,
+    discount: 0,
+    total: 0,
+    pointsEarned: 0,
+    shippingMethod: 'delivery' as 'delivery' | 'pickup',
+    address: '',
+    deliveryDate: '',
+    deliveryTime: ''
+  });
   
   const router = useRouter();
 
@@ -55,7 +67,9 @@ export default function CheckoutPage() {
 
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const deliveryFee = shippingMethod === 'delivery' ? 2.50 : 0.00;
-  const total = subtotal + deliveryFee;
+  const maxPointsToUse = Math.min(user ? user.clubPoints : 0, 350);
+  const discount = usePoints ? Math.min(maxPointsToUse * 0.01, subtotal) : 0;
+  const total = subtotal + deliveryFee - discount;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -66,10 +80,54 @@ export default function CheckoutPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const maxPointsToUse = Math.min(user ? user.clubPoints : 0, 350);
+    const calculatedDiscount = usePoints ? Math.min(maxPointsToUse * 0.01, subtotal) : 0;
+    const calculatedTotal = subtotal + deliveryFee - calculatedDiscount;
+    const calculatedPointsEarned = Math.round(calculatedTotal);
+
+    // Save summary before clearing cart
+    setSummary({
+      subtotal,
+      deliveryFee,
+      discount: calculatedDiscount,
+      total: calculatedTotal,
+      pointsEarned: calculatedPointsEarned,
+      shippingMethod,
+      address: shippingMethod === 'delivery' ? form.address : '',
+      deliveryDate: form.deliveryDate,
+      deliveryTime: form.deliveryTime
+    });
+
     // Simulate API call to process checkout
     setTimeout(() => {
       const generatedId = `ANAN-${Math.floor(100000 + Math.random() * 900000)}`;
       setOrderId(generatedId);
+      
+      // Save order
+      placeOrder({
+        id: generatedId,
+        date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }),
+        items: [...cart], // clone items
+        subtotal,
+        deliveryFee,
+        discount: calculatedDiscount,
+        total: calculatedTotal,
+        shippingMethod,
+        paymentMethod,
+        address: shippingMethod === 'delivery' ? form.address : undefined,
+        deliveryDate: form.deliveryDate,
+        deliveryTime: form.deliveryTime,
+        status: 'Procesando'
+      });
+
+      // Deduct used points
+      if (usePoints) {
+        deductPoints(maxPointsToUse);
+      }
+      
+      // Add earned points
+      addPoints(calculatedPointsEarned);
+
       setIsSubmitting(false);
       setOrderCompleted(true);
       clearCart();
@@ -101,21 +159,31 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between border-b border-gray-200 pb-3">
               <span className="text-gray-500 font-bold">Método de Envío:</span>
-              <span className="font-bold text-gray-800 capitalize">{shippingMethod === 'delivery' ? 'Delivery a domicilio' : 'Retiro en Tienda (Pickup)'}</span>
+              <span className="font-bold text-gray-800 capitalize">{summary.shippingMethod === 'delivery' ? 'Delivery a domicilio' : 'Retiro en Tienda (Pickup)'}</span>
             </div>
-            {shippingMethod === 'delivery' && (
+            {summary.shippingMethod === 'delivery' && (
               <div className="flex justify-between border-b border-gray-200 pb-3">
                 <span className="text-gray-500 font-bold">Dirección:</span>
-                <span className="font-bold text-gray-800 text-right max-w-[250px] truncate">{form.address}, San Luis, El Cafetal</span>
+                <span className="font-bold text-gray-800 text-right max-w-[250px] truncate">{summary.address}, San Luis, El Cafetal</span>
               </div>
             )}
             <div className="flex justify-between border-b border-gray-200 pb-3">
               <span className="text-gray-500 font-bold">Fecha / Hora de Entrega:</span>
-              <span className="font-bold text-gray-800">{form.deliveryDate || 'Hoy'} ({form.deliveryTime})</span>
+              <span className="font-bold text-gray-800">{summary.deliveryDate || 'Hoy'} ({summary.deliveryTime})</span>
+            </div>
+            {summary.discount > 0 && (
+              <div className="flex justify-between border-b border-gray-200 pb-3 text-red-500 font-semibold">
+                <span>Descuento Club Ananas:</span>
+                <span>-${summary.discount.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between border-b border-gray-200 pb-3 text-yellow-600 font-semibold">
+              <span>Puntos Ganados:</span>
+              <span>+{summary.pointsEarned} pts</span>
             </div>
             <div className="flex justify-between pt-1">
               <span className="text-gray-800 font-bold text-lg">Total Pagado:</span>
-              <span className="font-black text-ananas-green text-xl">${total.toFixed(2)}</span>
+              <span className="font-black text-ananas-green text-xl">${summary.total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -389,6 +457,32 @@ export default function CheckoutPage() {
               ))}
             </div>
 
+            {/* Club Points Section */}
+            {user && user.clubPoints > 0 && (
+              <div className="bg-yellow-50/70 border border-yellow-100 rounded-2xl p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-yellow-600 font-bold">✨ Club Ananas</span>
+                  </div>
+                  <span className="text-xs text-gray-500 font-bold">{user.clubPoints} pts disponibles</span>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Canjea hasta 350 puntos por un descuento de hasta $3.50 ($0.01 por punto).
+                </p>
+                <label className="flex items-center gap-3 mt-3 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={usePoints}
+                    onChange={(e) => setUsePoints(e.target.checked)}
+                    className="w-5 h-5 rounded border-gray-300 text-ananas-green focus:ring-ananas-green accent-ananas-green"
+                  />
+                  <span className="text-sm font-bold text-gray-700">
+                    Usar {Math.min(user.clubPoints, 350)} puntos (-${(Math.min(user.clubPoints, 350) * 0.01).toFixed(2)})
+                  </span>
+                </label>
+              </div>
+            )}
+
             <div className="space-y-4 border-t border-b border-gray-200 py-6 text-gray-600 font-medium">
               <div className="flex justify-between">
                 <span>Subtotal ({cart.length} items)</span>
@@ -398,6 +492,12 @@ export default function CheckoutPage() {
                 <span>Costo de Envío</span>
                 <span>{deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'Gratis'}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-red-500 font-semibold">
+                  <span>Descuento Club Ananas</span>
+                  <span>-${discount.toFixed(2)}</span>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center">

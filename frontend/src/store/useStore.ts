@@ -20,11 +20,28 @@ export interface User {
   clubLevel: 'Bronce' | 'Plata' | 'Oro';
 }
 
+export interface Order {
+  id: string;
+  date: string;
+  items: CartItem[];
+  subtotal: number;
+  deliveryFee: number;
+  discount: number;
+  total: number;
+  shippingMethod: 'delivery' | 'pickup';
+  paymentMethod: 'pagomovil' | 'zelle' | 'cash';
+  address?: string;
+  deliveryDate: string;
+  deliveryTime: string;
+  status: 'Procesando' | 'Listo para retirar' | 'En camino' | 'Entregado' | 'Cancelado';
+}
+
 interface AppState {
   cart: CartItem[];
   user: User | null;
   zone: string | null;
   products: Product[];
+  orders: Order[];
   setProducts: (products: Product[]) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (id: string) => void;
@@ -33,6 +50,9 @@ interface AppState {
   setZone: (zone: string) => void;
   login: (user: User) => void;
   logout: () => void;
+  placeOrder: (order: Order) => void;
+  deductPoints: (points: number) => void;
+  addPoints: (points: number) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -42,6 +62,7 @@ export const useStore = create<AppState>()(
       user: null,
       zone: 'San Luis El Cafetal',
       products: initialProducts,
+      orders: [],
       
       setProducts: (products) => set({ products }),
       
@@ -70,6 +91,34 @@ export const useStore = create<AppState>()(
       login: (user) => set({ user }),
       
       logout: () => set({ user: null }),
+      
+      placeOrder: (order) => set((state) => ({
+        orders: [order, ...state.orders]
+      })),
+      
+      deductPoints: (points) => set((state) => {
+        if (!state.user) return {};
+        const newPoints = Math.max(0, state.user.clubPoints - points);
+        let clubLevel = state.user.clubLevel;
+        if (newPoints >= 500) clubLevel = 'Oro';
+        else if (newPoints >= 200) clubLevel = 'Plata';
+        else clubLevel = 'Bronce';
+        return {
+          user: { ...state.user, clubPoints: newPoints, clubLevel }
+        };
+      }),
+      
+      addPoints: (points) => set((state) => {
+        if (!state.user) return {};
+        const newPoints = state.user.clubPoints + points;
+        let clubLevel = state.user.clubLevel;
+        if (newPoints >= 500) clubLevel = 'Oro';
+        else if (newPoints >= 200) clubLevel = 'Plata';
+        else clubLevel = 'Bronce';
+        return {
+          user: { ...state.user, clubPoints: newPoints, clubLevel }
+        };
+      })
     }),
     {
       name: 'ananas-storage',
