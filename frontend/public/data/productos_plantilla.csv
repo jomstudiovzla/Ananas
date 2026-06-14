@@ -1,10 +1,10 @@
 id,name,price,category,subcategory,image,unit,labels,stock,warehouseStock
 p1,TOMATES PERITA X KG,3.49,frutas-vegetales,Frescos,/Ananas/images/products/tomates_perita.png,1 Kg,Nuevo,69,229
-p2,CEBOLLA INDIAN MOLIDA 55G,3.29,frutas-vegetales,Frescos,/Ananas/images/products/cebolla_blanca.png,1 Kg,,26,198
+p2,Cebolla Blanca X KG,2.10,frutas-vegetales,Frescos,/Ananas/images/products/cebolla_blanca.png,1 Kg,,26,198
 p3,PAPAS X KG,2.95,frutas-vegetales,Frescos,/Ananas/images/products/papa_lavada.png,1 Kg,Nuevo,74,130
 p4,ZANAHORIAS X KG,2.89,frutas-vegetales,Frescos,/Ananas/images/products/zanahoria.png,1 Kg,,42,360
 p5,PIMENTON VERDE X KG,3.75,frutas-vegetales,Frescos,/Ananas/images/products/pimenton_verde.png,1 Kg,,95,404
-p6,LECHUGA ROMANA CULPROFRES 450G,2.95,frutas-vegetales,Frescos,/Ananas/images/products/lechuga_romana.png,1 Unidad,,19,348
+p6,Lechuga Romana,1.20,frutas-vegetales,Frescos,/Ananas/images/products/lechuga_romana.png,1 Unidad,,19,348
 p7,PLATANO X KG,2.79,frutas-vegetales,Enteras,/Ananas/images/products/platano_maduro.png,1 Kg,,49,189
 p8,CAMBUR X KG,1.35,frutas-vegetales,Enteras,/Ananas/images/products/cambur.png,1 Kg,,16,181
 p9,MANZANA ROYAL GALA X KG,5.25,frutas-vegetales,Enteras,/Ananas/images/products/manzana_gala.png,1 Kg,,92,306
@@ -18,14 +18,14 @@ p16,CARNE MOLIDA SV,9.95,refrigerados-congelados,Carnes,/Ananas/images/products/
 p17,Bistec de Ganso,11.50,refrigerados-congelados,Carnes,/Ananas/images/products/bistec_ganso.png,1 Kg,Nuevo,20,148
 p18,COSTILLAS DE CERDO BBQ PREPARADOS PLAZAS CONGELADO X KG,21.95,refrigerados-congelados,Carnes,/Ananas/images/products/costilla_res.png,1 Kg,,89,145
 p19,PECHUGA DE POLLO MOLIDA X KG,11.45,refrigerados-congelados,Pollos,/Ananas/images/products/pechuga_pollo.png,1 Kg,,82,71
-p20,POLLO ENTERO UN POLLO PREMIUM X KG,4.45,refrigerados-congelados,Pollos,/Ananas/images/products/pollo_entero.png,1 Kg,Nuevo,42,55
+p20,Pollo Entero X KG,4.50,refrigerados-congelados,Pollos,/Ananas/images/products/pollo_entero.png,1 Kg,Nuevo,42,55
 p21,MUSLOS DE POLLO X KG,4.25,refrigerados-congelados,Pollos,/Ananas/images/products/muslos_pollo.png,1 Kg,,50,77
-p22,DIADEX CREMA ANTIPAÑALITIS ALOE TUBO 50G,7.99,refrigerados-congelados,Pollos,/Ananas/images/products/alitas_pollo.png,1 Kg,,32,298
+p22,Alitas de Pollo X KG,6.00,refrigerados-congelados,Pollos,/Ananas/images/products/alitas_pollo.png,1 Kg,,32,298
 p23,JAMON ENDIABLADO PLUMROSE 60G,2.15,refrigerados-congelados,Embutidos,/Ananas/images/products/jamon_cocido.png,500g,,93,323
 p24,QUESO AMARILLO MAJU X KG,27.29,refrigerados-congelados,Embutidos,/Ananas/images/products/queso_amarillo.png,500g,,98,460
 p25,QUESO BLANCO MERIDEÑO X KG,10.99,refrigerados-congelados,Embutidos,/Ananas/images/products/queso_blanco.png,1 Kg,,84,282
 p26,SALCHICHAS FRANKFURT PLUMROSE DE 350G,9.89,refrigerados-congelados,Embutidos,/Ananas/images/products/salchichas.png,1 Paquete,,59,430
-p27,TOCINETAS OINK PICANTE 110G,1.69,refrigerados-congelados,Embutidos,/Ananas/images/products/tocino.png,250g,,39,155
+p27,Tocino Ahumado Plumrose 250G,4.80,refrigerados-congelados,Embutidos,/Ananas/images/products/tocino.png,250g,,39,155
 p28,CHORIZO MONTSERRATINA TIPO VELA X KG,52.88,refrigerados-congelados,Embutidos,/Ananas/images/products/chorizo.png,500g,,55,170
 p29,QUESO GUAYANES X KG,8.19,refrigerados-congelados,Embutidos,/Ananas/images/products/queso_guayanes.png,500g,,89,496
 p30,NUGGETS DE POLLO PLAZAS CONGELADOS X KG,13.44,refrigerados-congelados,Pollos,/Ananas/images/products/nuggets.png,1 Paquete,,37,322
@@ -37,13 +37,13 @@ p35,MALTA MALTIN POLAR 1.5L,1.93,viveres,Refrescos,/Ananas/images/products/malti
 p36,ARROZ MARY DORADO 800G,1.75,viveres,Arroz,/Ananas/images/products/arroz_blanco.png,1 Kg,,94,443
 p37,ARROZ PRIMOR TRADICIONAL 900G,1.50,viveres,Arroz,/Ananas/images/products/arroz_primor.png,1 Kg,,82,429
 p38,PASTA CAPRI CANELONES 250G,1.49,viveres,Pasta,/Ananas/images/products/pasta_capri.png,1 Kg,,19,327
-p39,HARINA PAN MAIZ BLANCO GLUTEN FREE 2KG,2.45,viveres,Arroz,/Ananas/images/products/harina_pan.png,1 Kg,Nuevo,28,331
-p40,CARAOTAS BLANCAS MARY 500G,3.40,viveres,Enlatados,/Ananas/images/products/caraotas.png,500g,,82,461
-p41,LENTEJAS MARY 400G,1.80,viveres,Enlatados,/Ananas/images/products/lentejas.png,500g,,37,174
+p39,HARINA PAN MAIZ BLANCO GLUTEN FREE 2KG,2.45,viveres,Harinas,/Ananas/images/products/harina_pan.png,1 Kg,Nuevo,28,331
+p40,CARAOTAS BLANCAS MARY 500G,3.40,viveres,Granos,/Ananas/images/products/caraotas.png,500g,,82,461
+p41,LENTEJAS MARY 400G,1.80,viveres,Granos,/Ananas/images/products/lentejas.png,500g,,37,174
 p42,ATUN MARGARITA EN ACEITE VEGETAL 140G,3.35,viveres,Enlatados,/Ananas/images/products/atun_aceite.png,140g,,100,220
 p43,ATUN MARGARITA AL NATURAL 140G,3.00,viveres,Enlatados,/Ananas/images/products/atun_agua.png,140g,,46,218
 p44,MAIZ DULCE CAUJARAL 4UN,7.90,viveres,Enlatados,/Ananas/images/products/maiz_lata.png,300g,,37,249
-p45,ACEITE MAZEITE DE MAIZ 1L,5.80,viveres,Arroz,/Ananas/images/products/aceite_maiz.png,1 Litro,,90,193
+p45,ACEITE MAZEITE DE MAIZ 1L,5.80,viveres,Aceites,/Ananas/images/products/aceite_maiz.png,1 Litro,,90,193
 p46,JABON LIQUIDO PROTEX DE AVENA 221ML,6.50,cuidado-personal-salud,Aseo,/Ananas/images/products/jabon_protex.png,3 Unidades,,59,82
 p47,DESODORANTE ROLL ON DOVE DERMOACLARANTE 50ML,4.85,cuidado-personal-salud,Aseo,/Ananas/images/products/desodorante.png,50ml,,29,236
 p48,CEPILLO DENTAL COLGATE 360 MEDIO,4.74,cuidado-personal-salud,Aseo,/Ananas/images/products/crema_dental.png,100g,,14,284
@@ -72,13 +72,13 @@ p70,BOLSAS GRANCO PARA BASURA EXTRA RESISTENTES 60L X 6UN,2.42,limpieza,Accesori
 p71,CERVEZA POLAR PILSEN LATA DE 250ML,0.99,licores,Cervezas,/Ananas/images/products/cerveza_pilsen.png,Caja 36,,56,256
 p72,CERVEZA POLAR LIGHT LATA SLEEK DE 355ML,1.06,licores,Cervezas,/Ananas/images/products/cerveza_light.png,Caja 36,,26,495
 p73,CERVEZA SOLERA LATA DE 250ML,0.99,licores,Cervezas,/Ananas/images/products/cerveza_solera.png,6 Pack,,43,298
-p74,CARBON EL ZULIA 3KG,12.60,licores,Cervezas,/Ananas/images/products/cerveza_zulia.png,6 Pack,,100,78
-p75,VELON SANTA TERESA PRIMAVERA,5.90,licores,Destilados,/Ananas/images/products/ron_teresa.png,750ml,,86,304
+p74,Cerveza Zulia 6 Pack,6.00,licores,Cervezas,/Ananas/images/products/cerveza_zulia.png,6 Pack,,100,78
+p75,Ron Santa Teresa Linaje 750ML,18.00,licores,Destilados,/Ananas/images/products/ron_teresa.png,750ml,,86,304
 p76,"RON CACIQUE 500 NUEVA IMAGEN 0,75L",15.51,licores,Destilados,/Ananas/images/products/ron_cacique.png,750ml,Nuevo,89,128
-p77,SALSA DE TOMATE KETCHUP PAMPERO 397G,2.55,licores,Destilados,/Ananas/images/products/ron_pampero.png,750ml,Nuevo,100,338
+p77,Ron Pampero Aniversario 750ML,22.00,licores,Destilados,/Ananas/images/products/ron_pampero.png,750ml,Nuevo,100,338
 p78,"RON CARUPANO RESERVA EXCLUSIVA 0,70L",19.01,licores,Destilados,/Ananas/images/products/ron_diplomatico.png,750ml,,33,444
 p79,"WHISKY BUCHANANS DE LUXE 0,70 L",49.46,licores,Destilados,/Ananas/images/products/whisky_buchanans.png,750ml,,61,370
 p80,"WHISKY OLD PARR SILVER 0,75L",32.16,licores,Destilados,/Ananas/images/products/whisky_parr.png,750ml,Nuevo,16,393
 p81,"VODKA GORDONS MANDARINA 0,70L",11.96,licores,Destilados,/Ananas/images/products/vodka.png,750ml,Nuevo,35,484
-p82,GUISANTES CON ZANAHORIAS DEL MONTE 411G,5.89,licores,Vinos,/Ananas/images/products/vino_tinto.png,750ml,,26,253
-p83,Vino Blanco Santa Helena,8.50,licores,Vinos,/Ananas/images/products/vino_blanco.png,750ml,,13,106
+p82,Vino Tinto Casillero del Diablo 750ML,12.50,licores,Vinos,/Ananas/images/products/vino_tinto.png,750ml,,26,253
+p83,Vino Blanco Santa Helena 750ML,8.50,licores,Vinos,/Ananas/images/products/vino_blanco.png,750ml,,13,106
