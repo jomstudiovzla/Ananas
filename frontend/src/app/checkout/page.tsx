@@ -28,6 +28,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderId, setOrderId] = useState('');
+  const [paymentCapture, setPaymentCapture] = useState<string>('');
   const [summary, setSummary] = useState({
     subtotal: 0,
     deliveryFee: 0,
@@ -45,17 +46,21 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setMounted(true);
-    // Auto fill user details if logged in
-    if (user) {
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !user) {
+      router.push('/login?redirect=/checkout');
+    } else if (user) {
       setForm(prev => ({
         ...prev,
         name: user.name,
         phone: prev.phone || ''
       }));
     }
-  }, [user]);
+  }, [mounted, user, router]);
 
-  if (!mounted) return null;
+  if (!mounted || !user) return null;
 
   // If cart is empty and order is not completed, redirect to home
   if (cart.length === 0 && !orderCompleted) {
@@ -79,6 +84,24 @@ export default function CheckoutPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCaptureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("La imagen es muy grande. Por favor sube una imagen menor a 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        setPaymentCapture(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -130,7 +153,8 @@ export default function CheckoutPage() {
         address: shippingMethod === 'delivery' ? form.address : undefined,
         deliveryDate: form.deliveryDate,
         deliveryTime: form.deliveryTime,
-        status: orderStatus
+        status: orderStatus,
+        paymentCapture: paymentCapture || undefined
       });
 
       // Deduct used points
@@ -588,6 +612,40 @@ export default function CheckoutPage() {
                       ? 'Paga en divisas en efectivo directamente al motorizado al recibir tu pedido. Por favor ten el monto exacto.' 
                       : 'Realiza tu pago en caja (divisas o bolívares en efectivo) al retirar tu pedido por la tienda de San Luis.'}
                   </p>
+                </div>
+              )}
+
+              {paymentMethod !== 'cash' && (
+                <div className="mt-6 border-t border-gray-200/80 pt-6">
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">
+                    Comprobante de Pago (Capture / Captura de Pantalla)
+                  </label>
+                  
+                  {paymentCapture ? (
+                    <div className="relative w-full max-w-[200px] aspect-video rounded-xl overflow-hidden border border-gray-200 group">
+                      <img src={paymentCapture} alt="Comprobante" className="w-full h-full object-cover" />
+                      <button 
+                        type="button"
+                        onClick={() => setPaymentCapture('')}
+                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs"
+                      >
+                        ✕ Quitar
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center border border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:bg-white hover:border-ananas-green transition group">
+                      <span className="text-xs text-gray-400 group-hover:text-ananas-green transition font-medium">
+                        Subir imagen del comprobante
+                      </span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleCaptureChange}
+                        className="hidden" 
+                      />
+                    </label>
+                  )}
+                  <p className="text-[10px] text-gray-400 mt-1.5">Sube la captura de tu Pago Móvil, Zelle, Transferencia o Binance Pay (máx. 2MB).</p>
                 </div>
               )}
             </div>

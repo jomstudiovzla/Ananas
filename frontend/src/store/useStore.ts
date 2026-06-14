@@ -34,6 +34,7 @@ export interface Order {
   deliveryDate: string;
   deliveryTime: string;
   status: 'Procesando' | 'Listo para retirar' | 'En camino' | 'Entregado' | 'Cancelado' | 'En revisión' | 'Facturado';
+  paymentCapture?: string;
 }
 
 interface AppState {
@@ -53,6 +54,7 @@ interface AppState {
   placeOrder: (order: Order) => void;
   deductPoints: (points: number) => void;
   addPoints: (points: number) => void;
+  updateOrderStatus: (id: string, status: Order['status']) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -94,6 +96,10 @@ export const useStore = create<AppState>()(
       
       placeOrder: (order) => set((state) => ({
         orders: [order, ...state.orders]
+      })),
+      
+      updateOrderStatus: (id, status) => set((state) => ({
+        orders: state.orders.map((o) => o.id === id ? { ...o, status } : o)
       })),
       
       deductPoints: (points) => set((state) => {

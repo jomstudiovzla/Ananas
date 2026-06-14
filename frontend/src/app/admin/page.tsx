@@ -1,22 +1,61 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import Papa from 'papaparse';
-import { useStore } from '@/store/useStore';
-import { Upload, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useStore, Order } from '@/store/useStore';
+import { Upload, CheckCircle, AlertTriangle, LogOut, Package, ClipboardList, ShieldAlert, Image as ImageIcon, Check, X, Phone, Mail, User as UserIcon, Calendar, Clock, MapPin, DollarSign } from 'lucide-react';
 import { Product } from '@/data/mockDb';
 import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
   const setProducts = useStore(state => state.setProducts);
   const products = useStore(state => state.products);
+  const orders = useStore(state => state.orders);
+  const updateOrderStatus = useStore(state => state.updateOrderStatus);
+  
   const [status, setStatus] = useState<{type: 'idle' | 'success' | 'error', msg: string}>({type: 'idle', msg: ''});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
+  // Authentication state
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  // Dashboard layout state
+  const [activeTab, setActiveTab] = useState<'orders' | 'csv'>('orders');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
   useEffect(() => {
     setMounted(true);
+    // Check if already authenticated in this session
+    if (typeof window !== 'undefined') {
+      const logged = sessionStorage.getItem('isAdminLoggedIn');
+      if (logged === 'true') {
+        setIsAdminLoggedIn(true);
+      }
+    }
   }, []);
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (adminEmail === 'admin@admin.com' && adminPassword === '1234') {
+      setIsAdminLoggedIn(true);
+      sessionStorage.setItem('isAdminLoggedIn', 'true');
+      setLoginError('');
+    } else {
+      setLoginError('Credenciales incorrectas. Verifica el correo y la clave.');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAdminLoggedIn(false);
+    sessionStorage.removeItem('isAdminLoggedIn');
+    setAdminEmail('');
+    setAdminPassword('');
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -52,7 +91,7 @@ export default function AdminPage() {
   };
 
   const handleDownloadTemplate = () => {
-    const template = "id,name,price,category,subcategory,image,unit,labels\np1,Tomates Perita,3.49,frutas-vegetales,Frescos,https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400,1 Kg,Oferta|Fresco\np2,Lechosa,1.75,frutas-vegetales,Enteras,https://images.unsplash.com/photo-1615486171448-4fd1ab2c88f3?w=400,1 Kg,";
+    const template = "id,name,price,category,subcategory,image,unit,labels\np1,Tomates Perita,3.49,frutas-vegetales,Frescos,/Ananas/images/products/tomates_perita.png,1 Kg,Oferta|Fresco\np2,Lechosa,1.75,frutas-vegetales,Enteras,/Ananas/images/products/lechosa.png,1 Kg,";
     const blob = new Blob([template], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -61,66 +100,436 @@ export default function AdminPage() {
     a.click();
   };
 
+  const changeStatus = (orderId: string, newStatus: Order['status']) => {
+    updateOrderStatus(orderId, newStatus);
+    // Update active modal order details as well
+    if (selectedOrder && selectedOrder.id === orderId) {
+      setSelectedOrder(prev => prev ? { ...prev, status: newStatus } : null);
+    }
+  };
+
   if (!mounted) return null;
 
-  return (
-    <div className="max-w-4xl mx-auto py-20 px-4 min-h-[70vh]">
-      <h1 className="text-4xl font-black text-gray-800 mb-2">Panel de Administración</h1>
-      <p className="text-gray-500 mb-10">Sube una hoja de cálculo CSV para actualizar el catálogo de productos en tiempo real.</p>
-
-      <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm text-center">
-        <input 
-          type="file" 
-          accept=".csv" 
-          ref={fileInputRef} 
-          className="hidden" 
-          onChange={handleFileUpload} 
-        />
-        
-        <div 
-          onClick={() => fileInputRef.current?.click()}
-          className="w-full max-w-md mx-auto aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-ananas-green transition group mb-8"
-        >
-          <Upload size={48} className="text-gray-300 group-hover:text-ananas-green transition mb-4" />
-          <p className="text-gray-600 font-bold">Haz clic o arrastra un archivo CSV aquí</p>
-          <p className="text-sm text-gray-400 mt-2">Formatos aceptados: .csv</p>
-        </div>
-
-        {status.type === 'success' && (
-          <div className="bg-green-50 text-green-700 p-4 rounded-xl flex items-center justify-center gap-2 mb-6 font-bold">
-            <CheckCircle size={20} /> {status.msg}
+  // ------------------ LOGIN SCREEN ------------------
+  if (!isAdminLoggedIn) {
+    return (
+      <div className="max-w-md mx-auto py-20 px-4">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+          <div className="w-16 h-16 bg-ananas-green/10 text-ananas-green rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <ShieldAlert size={36} />
           </div>
-        )}
+          <h1 className="text-3xl font-black text-gray-800 mb-2 text-center">
+            Portal Admin
+          </h1>
+          <p className="text-center text-gray-500 mb-8 font-medium">
+            Ingresa las credenciales de administrador para continuar.
+          </p>
 
-        {status.type === 'error' && (
-          <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-center justify-center gap-2 mb-6 font-bold">
-            <AlertTriangle size={20} /> {status.msg}
-          </div>
-        )}
+          <form onSubmit={handleLoginSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Correo de Administrador</label>
+              <input 
+                required 
+                type="email" 
+                value={adminEmail} 
+                onChange={e => setAdminEmail(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
+                placeholder="admin@admin.com"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
+              <input 
+                required 
+                type="password" 
+                value={adminPassword} 
+                onChange={e => setAdminPassword(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
+                placeholder="••••"
+              />
+            </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button 
-            onClick={handleDownloadTemplate}
-            className="text-gray-500 font-bold bg-gray-100 px-6 py-3 rounded-xl hover:bg-gray-200 transition w-full sm:w-auto"
-          >
-            Descargar Plantilla CSV
-          </button>
-          
-          {status.type === 'success' && (
-            <button 
-              onClick={() => router.push('/')}
-              className="text-white font-bold bg-ananas-green px-6 py-3 rounded-xl hover:bg-ananas-dark transition w-full sm:w-auto shadow-lg shadow-ananas-green/20"
-            >
-              Ver Tienda Actualizada
+            {loginError && (
+              <div className="text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg text-center">
+                {loginError}
+              </div>
+            )}
+
+            <button type="submit" className="w-full bg-ananas-green text-white font-bold text-lg py-4 rounded-xl hover:bg-ananas-dark transition shadow-lg shadow-ananas-green/20">
+              Iniciar Sesión
             </button>
-          )}
-        </div>
-        
-        <div className="mt-8 text-left border-t border-gray-100 pt-6">
-            <p className="text-sm text-gray-400 mb-2 font-bold">Resumen del sistema:</p>
-            <p className="text-xs text-gray-500">Productos actualmente en el catálogo: <strong className="text-gray-800">{products.length}</strong></p>
+          </form>
         </div>
       </div>
+    );
+  }
+
+  // ------------------ ADMIN PANEL DASHBOARD ------------------
+  return (
+    <div className="max-w-7xl mx-auto py-12 px-4 min-h-[80vh] space-y-8">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
+        <div>
+          <h1 className="text-4xl font-black text-gray-800 tracking-tight">Panel de Control</h1>
+          <p className="text-gray-500 font-medium mt-1">Hola Administrador, gestiona los pedidos y el catálogo de productos.</p>
+        </div>
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold px-5 py-3 rounded-xl transition cursor-pointer"
+        >
+          <LogOut size={18} /> Salir del Panel
+        </button>
+      </div>
+
+      {/* Tabs Selector */}
+      <div className="flex gap-4 border-b border-gray-200 pb-2">
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+            activeTab === 'orders' 
+              ? 'border-ananas-green text-ananas-green' 
+              : 'border-transparent text-gray-400 hover:text-gray-600'
+          }`}
+        >
+          <ClipboardList size={20} /> Pedidos en Espera ({orders.filter(o => o.status === 'En revisión').length})
+        </button>
+        <button
+          onClick={() => setActiveTab('csv')}
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+            activeTab === 'csv' 
+              ? 'border-ananas-green text-ananas-green' 
+              : 'border-transparent text-gray-400 hover:text-gray-600'
+          }`}
+        >
+          <Upload size={20} /> Cargar Catálogo (CSV)
+        </button>
+      </div>
+
+      {/* ------------------ TAB 1: ORDERS MANAGEMENT ------------------ */}
+      {activeTab === 'orders' && (
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 md:p-8 space-y-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-black text-gray-800 flex items-center gap-2">
+              <Package className="text-ananas-green" /> Listado de Pedidos Recientes
+            </h2>
+            <span className="text-xs font-bold text-gray-400">{orders.length} pedidos en total</span>
+          </div>
+
+          {orders.length === 0 ? (
+            <div className="text-center py-16 text-gray-400">
+              <Package size={64} className="mx-auto mb-4 opacity-30" />
+              <p className="text-lg font-bold">No hay pedidos registrados en la tienda.</p>
+              <p className="text-sm">Los pedidos que realicen los usuarios aparecerán aquí.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-100 text-gray-400 text-xs uppercase font-black tracking-wider pb-4">
+                    <th className="py-4 px-4">Pedido / Fecha</th>
+                    <th className="py-4 px-4">Cliente</th>
+                    <th className="py-4 px-4">Método de Pago</th>
+                    <th className="py-4 px-4">Total</th>
+                    <th className="py-4 px-4">Estado</th>
+                    <th className="py-4 px-4 text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50 text-sm font-medium">
+                  {orders.map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-50/50 transition">
+                      <td className="py-4 px-4">
+                        <span className="font-black text-gray-800 block">#{order.id}</span>
+                        <span className="text-xs text-gray-400">{order.date}</span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="text-gray-800 font-bold block">{order.address ? '📦 Delivery' : '🏪 Retiro'}</span>
+                        <span className="text-xs text-gray-500">{order.items.length} productos</span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="capitalize text-gray-700 font-bold block">
+                          {order.paymentMethod === 'pagomovil' ? '📱 Pago Móvil' :
+                           order.paymentMethod === 'zelle' ? '🟣 Zelle' :
+                           order.paymentMethod === 'transferencia' ? '🏦 Transferencia' :
+                           order.paymentMethod === 'creditcard' ? '💳 Tarjeta' :
+                           order.paymentMethod === 'paypal' ? '🔵 PayPal' :
+                           order.paymentMethod === 'binance' ? '🟡 Binance' : '💵 Efectivo'}
+                        </span>
+                        {order.paymentCapture && (
+                          <span className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1 mt-1">
+                            <ImageIcon size={10} /> Capture adjunto
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-4 px-4 font-black text-ananas-green text-base">
+                        ${order.total.toFixed(2)}
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          order.status === 'Facturado' ? 'bg-green-100 text-green-700' :
+                          order.status === 'En revisión' ? 'bg-yellow-100 text-yellow-700' :
+                          order.status === 'Cancelado' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <button 
+                          onClick={() => setSelectedOrder(order)}
+                          className="bg-ananas-green/10 hover:bg-ananas-green hover:text-white text-ananas-green text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer"
+                        >
+                          Verificar Pedido
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ------------------ TAB 2: CSV CATALOG UPLOAD ------------------ */}
+      {activeTab === 'csv' && (
+        <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm text-center space-y-6">
+          <div className="text-left max-w-lg mx-auto">
+            <h2 className="text-2xl font-black text-gray-800">Cargar Catálogo por CSV</h2>
+            <p className="text-gray-500 font-medium text-sm mt-1">Puedes actualizar todos los productos, precios y fotos subiendo un archivo CSV.</p>
+          </div>
+          
+          <input 
+            type="file" 
+            accept=".csv" 
+            ref={fileInputRef} 
+            className="hidden" 
+            onChange={handleFileUpload} 
+          />
+          
+          <div 
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full max-w-md mx-auto aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-ananas-green transition group mb-8"
+          >
+            <Upload size={48} className="text-gray-300 group-hover:text-ananas-green transition mb-4" />
+            <p className="text-gray-600 font-bold">Haz clic o arrastra un archivo CSV aquí</p>
+            <p className="text-sm text-gray-400 mt-2">Formatos aceptados: .csv</p>
+          </div>
+
+          {status.type === 'success' && (
+            <div className="bg-green-50 text-green-700 p-4 rounded-xl flex items-center justify-center gap-2 mb-6 font-bold max-w-md mx-auto">
+              <CheckCircle size={20} /> {status.msg}
+            </div>
+          )}
+
+          {status.type === 'error' && (
+            <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-center justify-center gap-2 mb-6 font-bold max-w-md mx-auto">
+              <AlertTriangle size={20} /> {status.msg}
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              onClick={handleDownloadTemplate}
+              className="text-gray-500 font-bold bg-gray-100 px-6 py-3 rounded-xl hover:bg-gray-200 transition w-full sm:w-auto cursor-pointer"
+            >
+              Descargar Plantilla CSV
+            </button>
+            
+            {status.type === 'success' && (
+              <button 
+                onClick={() => router.push('/')}
+                className="text-white font-bold bg-ananas-green px-6 py-3 rounded-xl hover:bg-ananas-dark transition w-full sm:w-auto shadow-lg shadow-ananas-green/20 cursor-pointer"
+              >
+                Ver Tienda Actualizada
+              </button>
+            )}
+          </div>
+          
+          <div className="mt-8 text-left border-t border-gray-100 pt-6 max-w-md mx-auto">
+              <p className="text-sm text-gray-400 mb-2 font-bold">Resumen de Inventario:</p>
+              <p className="text-xs text-gray-500">Productos actualmente cargados: <strong className="text-gray-800">{products.length}</strong></p>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------ ORDER DETAILS / VERIFICATION MODAL ------------------ */}
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-3xl w-full border border-gray-100 shadow-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setSelectedOrder(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full transition cursor-pointer"
+            >
+              ✕
+            </button>
+            <h3 className="text-2xl font-black text-gray-800 mb-2">Detalles y Verificación de Pedido</h3>
+            <p className="text-sm font-bold text-ananas-green mb-6">#{selectedOrder.id}</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              
+              {/* Left Column: Info & Products */}
+              <div className="space-y-6">
+                
+                {/* Contact details */}
+                <div className="bg-gray-50 rounded-2xl p-5 space-y-3 border border-gray-100">
+                  <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5"><UserIcon size={14} className="text-ananas-green" /> Datos de Contacto</h4>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <p className="flex items-center gap-2"><strong className="text-gray-700 font-bold">Cliente:</strong> {selectedOrder.address ? '📦 Delivery' : '🏪 Pickup'}</p>
+                    <p className="flex items-center gap-2"><Mail size={14} className="text-gray-400" /> Correo: admin@admin.com</p>
+                  </div>
+                  {selectedOrder.shippingMethod === 'delivery' && selectedOrder.address && (
+                    <div className="pt-2 border-t border-gray-200 mt-2 text-sm">
+                      <span className="text-xs text-gray-400 block uppercase font-bold mb-1"><MapPin size={12} className="inline mr-1" /> Dirección</span>
+                      <span className="font-medium text-gray-700">{selectedOrder.address}, San Luis, El Cafetal</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Products */}
+                <div className="space-y-3">
+                  <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider">Productos Comprados ({selectedOrder.items.length})</h4>
+                  <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
+                    {selectedOrder.items.map((item) => (
+                      <div key={item.id} className="flex items-center justify-between border-b border-gray-50 pb-2">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={item.image} 
+                            alt={item.name} 
+                            className="w-10 h-10 object-contain rounded-lg bg-gray-50 border border-gray-100" 
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/Ananas/images/products/placeholder.png';
+                            }}
+                          />
+                          <div>
+                            <p className="font-bold text-gray-800 text-sm">{item.name}</p>
+                            <p className="text-xs text-gray-500">
+                              {item.quantity} x ${item.price.toFixed(2)} / {item.unit}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="font-bold text-gray-800 text-sm">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Price Breakdown */}
+                <div className="border-t border-gray-200 pt-4 space-y-2 text-sm font-medium text-gray-600">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span className="font-bold text-gray-800">${selectedOrder.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Costo de Envío</span>
+                    <span className="font-bold text-gray-800">
+                      {selectedOrder.deliveryFee > 0 ? `$${selectedOrder.deliveryFee.toFixed(2)}` : 'Gratis'}
+                    </span>
+                  </div>
+                  {selectedOrder.discount > 0 && (
+                    <div className="flex justify-between text-red-500 font-semibold">
+                      <span>Descuento Club Ananas</span>
+                      <span className="font-bold">-${selectedOrder.discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-lg font-black text-gray-800 pt-2 border-t border-gray-200">
+                    <span>Total Pedido</span>
+                    <span className="text-ananas-green text-xl">${selectedOrder.total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Receipt Verification & Actions */}
+              <div className="space-y-6">
+                
+                {/* Payment Receipt Info */}
+                <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-4">
+                  <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-1">Detalle del Pago</h4>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-xs text-gray-400 block uppercase font-bold">Método</span>
+                      <span className="font-bold text-gray-800 capitalize">{selectedOrder.paymentMethod}</span>
+                    </div>
+                  </div>
+
+                  {/* Payment capture image */}
+                  <div>
+                    <span className="text-xs text-gray-400 block uppercase font-bold mb-2">Captura del Recibo / Capture</span>
+                    {selectedOrder.paymentCapture ? (
+                      <div className="relative group rounded-xl overflow-hidden border border-gray-200 bg-white aspect-video max-w-[260px] mx-auto cursor-pointer" onClick={() => setLightboxImage(selectedOrder.paymentCapture!)}>
+                        <img src={selectedOrder.paymentCapture} alt="Capture" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs gap-1.5">
+                          <ImageIcon size={16} /> Ampliar Imagen
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-gray-400 border border-dashed border-gray-200 rounded-xl bg-white text-xs font-bold">
+                        No se adjuntó capture de pago.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Verification Actions */}
+                <div className="space-y-3">
+                  <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider">Estado de Verificación</h4>
+                  <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-gray-400 block font-bold uppercase">Estado Actual</span>
+                      <span className={`font-black text-sm uppercase ${
+                        selectedOrder.status === 'Facturado' ? 'text-green-600' :
+                        selectedOrder.status === 'En revisión' ? 'text-yellow-600' :
+                        selectedOrder.status === 'Cancelado' ? 'text-red-600' : 'text-blue-600'
+                      }`}>{selectedOrder.status}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button 
+                      onClick={() => changeStatus(selectedOrder.id, 'Facturado')}
+                      disabled={selectedOrder.status === 'Facturado'}
+                      className="bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 transition flex items-center justify-center gap-1.5 cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+                    >
+                      <Check size={18} /> Aprobar (Facturar)
+                    </button>
+                    <button 
+                      onClick={() => changeStatus(selectedOrder.id, 'Cancelado')}
+                      disabled={selectedOrder.status === 'Cancelado'}
+                      className="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
+                    >
+                      <X size={18} /> Rechazar Pedido
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox Modal for screenshot preview */}
+      {lightboxImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4 cursor-zoom-out animate-in fade-in duration-200"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition cursor-pointer"
+            onClick={() => setLightboxImage(null)}
+          >
+            ✕
+          </button>
+          <img 
+            src={lightboxImage} 
+            alt="Capture full size" 
+            className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl animate-in zoom-in-95 duration-200" 
+          />
+        </div>
+      )}
     </div>
   );
 }

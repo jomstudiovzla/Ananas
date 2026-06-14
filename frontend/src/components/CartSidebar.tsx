@@ -4,10 +4,12 @@ import { X, ShoppingCart, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CartSidebar({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const { cart, removeFromCart, updateQuantity } = useStore();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
   
   useEffect(() => setMounted(true), []);
 
@@ -78,6 +80,15 @@ export default function CartSidebar({ isOpen, onClose }: { isOpen: boolean, onCl
               </div>
               <button 
                 disabled={!mounted || cart.length === 0}
+                onClick={() => {
+                  onClose();
+                  const isLogged = useStore.getState().user;
+                  if (!isLogged) {
+                    router.push('/login?redirect=/checkout');
+                  } else {
+                    router.push('/checkout');
+                  }
+                }}
                 className="w-full bg-ananas-green disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold text-lg hover:bg-ananas-dark hover:shadow-lg hover:shadow-ananas-green/30 transition-all transform hover:-translate-y-0.5"
               >
                 Proceder al Pago
