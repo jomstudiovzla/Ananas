@@ -28,15 +28,27 @@ export default function LoginPage() {
     setError('');
 
     if (email) {
-      // Simulamos auth y nivel en el club Ananas
-      login({
-        id: Math.random().toString(),
-        name: name || email.split('@')[0],
-        email: email,
-        clubPoints: 350, // Puntos simulados
-        clubLevel: 'Bronce'
-      });
-      router.push(redirectPath);
+      if (email === 'admin@jomstudio.com' && password === 'VZLA') {
+        login({
+          id: 'admin',
+          name: 'Administrador',
+          email: 'admin@jomstudio.com',
+          clubPoints: 0,
+          clubLevel: 'Oro'
+        });
+        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        router.push(redirectPath === '/account' ? '/account' : redirectPath);
+      } else {
+        // Simulamos auth y nivel en el club Ananas normal
+        login({
+          id: Math.random().toString(),
+          name: name || email.split('@')[0],
+          email: email,
+          clubPoints: 350,
+          clubLevel: 'Bronce'
+        });
+        router.push(redirectPath);
+      }
     }
   };
 

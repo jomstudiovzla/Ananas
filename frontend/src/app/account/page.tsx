@@ -44,6 +44,12 @@ export default function AccountPage() {
         </div>
 
         <div className="bg-white rounded-3xl p-4 border border-gray-100 shadow-sm space-y-2">
+          {user.id === 'admin' && (
+            <Link href="/ananas-secure-control-gate" className="flex items-center justify-between p-3 rounded-xl bg-yellow-50 text-yellow-600 font-bold border border-yellow-100 shadow-sm mb-2">
+              <div className="flex items-center gap-3"><Crown size={20} /> Panel Administrativo</div>
+              <ChevronRight size={18} />
+            </Link>
+          )}
           <Link href="/account" className="flex items-center justify-between p-3 rounded-xl bg-gray-50 text-ananas-green font-bold">
             <div className="flex items-center gap-3"><Star size={20} /> Ananas Club</div>
             <ChevronRight size={18} />
@@ -62,51 +68,76 @@ export default function AccountPage() {
       <div className="lg:col-span-3 space-y-8">
         
         {/* Ananas Club Widget */}
-        <div className="bg-gradient-to-br from-ananas-green to-ananas-dark rounded-3xl p-8 text-white shadow-xl shadow-ananas-green/20 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-8 opacity-10">
-            <Crown size={120} />
-          </div>
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-2">
-              <Star className="text-yellow-300" fill="currentColor" size={28} />
-              <h2 className="text-3xl font-black tracking-tight">Ananas Club</h2>
+        {user.id === 'admin' ? (
+          <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-3xl p-8 text-white shadow-xl shadow-yellow-500/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-20">
+              <Crown size={120} />
             </div>
-            <p className="text-ananas-light/80 font-medium mb-8">Nivel actual: <span className="text-white font-bold">{user.clubLevel}</span></p>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-2">
+                <Crown className="text-white" fill="currentColor" size={28} />
+                <h2 className="text-3xl font-black tracking-tight">Acceso Administrativo</h2>
+              </div>
+              <p className="text-yellow-100 font-medium mb-8">Nivel actual: <span className="text-white font-bold">Gerente (Oro)</span></p>
 
-            <div className="bg-white/10 rounded-2xl p-6 backdrop-blur-md border border-white/20">
-              <div className="flex justify-between items-end mb-4">
-                <div>
-                  <p className="text-sm font-bold opacity-80 mb-1">Tus Puntos</p>
-                  <p className="text-4xl font-black tracking-tighter">{user.clubPoints} <span className="text-lg font-medium opacity-70">pts</span></p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold opacity-80 mb-1">Próximo Nivel</p>
-                  <p className="text-lg font-bold text-yellow-300">Plata (500 pts)</p>
-                </div>
+              <div className="bg-white/10 rounded-2xl p-6 backdrop-blur-md border border-white/20 mb-6">
+                 <p className="text-lg font-bold mb-2">¡Hola, Administrador!</p>
+                 <p className="text-sm opacity-90 leading-relaxed">
+                   Tienes acceso total al panel de control, inventario, configuración de tasas de cambio y notificaciones de tienda en vivo. Haz clic en el botón de abajo para gestionar la frutería.
+                 </p>
               </div>
-
-              <div className="w-full bg-black/20 rounded-full h-3 mb-3">
-                <div className="bg-yellow-300 h-3 rounded-full" style={{ width: `${Math.min(clubProgress, 100)}%` }}></div>
-              </div>
-              <p className="text-sm font-medium opacity-90 text-right">Te faltan {500 - user.clubPoints} pts para alcanzar Plata</p>
-            </div>
-
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-black/10 p-4 rounded-xl">
-                <h4 className="font-bold mb-1">Envío Gratis</h4>
-                <p className="text-xs opacity-80">En compras mayores a $50</p>
-              </div>
-              <div className="bg-black/10 p-4 rounded-xl">
-                <h4 className="font-bold mb-1">Ofertas Exclusivas</h4>
-                <p className="text-xs opacity-80">Acceso anticipado a descuentos</p>
-              </div>
-              <div className="bg-black/10 p-4 rounded-xl opacity-50 relative group cursor-not-allowed">
-                <h4 className="font-bold mb-1">Sorpresa de Cumpleaños</h4>
-                <p className="text-xs opacity-80">Solo nivel Plata o superior</p>
-              </div>
+              <Link href="/ananas-secure-control-gate" className="inline-block bg-white text-yellow-600 font-bold px-6 py-3 rounded-xl hover:bg-yellow-50 transition shadow-lg text-sm">
+                Ir al Panel de Control de Ananas
+              </Link>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-gradient-to-br from-ananas-green to-ananas-dark rounded-3xl p-8 text-white shadow-xl shadow-ananas-green/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-10">
+              <Crown size={120} />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-2">
+                <Star className="text-yellow-300" fill="currentColor" size={28} />
+                <h2 className="text-3xl font-black tracking-tight">Ananas Club</h2>
+              </div>
+              <p className="text-ananas-light/80 font-medium mb-8">Nivel actual: <span className="text-white font-bold">{user.clubLevel}</span></p>
+
+              <div className="bg-white/10 rounded-2xl p-6 backdrop-blur-md border border-white/20">
+                <div className="flex justify-between items-end mb-4">
+                  <div>
+                    <p className="text-sm font-bold opacity-80 mb-1">Tus Puntos</p>
+                    <p className="text-4xl font-black tracking-tighter">{user.clubPoints} <span className="text-lg font-medium opacity-70">pts</span></p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold opacity-80 mb-1">Próximo Nivel</p>
+                    <p className="text-lg font-bold text-yellow-300">Plata (500 pts)</p>
+                  </div>
+                </div>
+
+                <div className="w-full bg-black/20 rounded-full h-3 mb-3">
+                  <div className="bg-yellow-300 h-3 rounded-full" style={{ width: `${Math.min(clubProgress, 100)}%` }}></div>
+                </div>
+                <p className="text-sm font-medium opacity-90 text-right">Te faltan {500 - user.clubPoints} pts para alcanzar Plata</p>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-black/10 p-4 rounded-xl">
+                  <h4 className="font-bold mb-1">Envío Gratis</h4>
+                  <p className="text-xs opacity-80">En compras mayores a $50</p>
+                </div>
+                <div className="bg-black/10 p-4 rounded-xl">
+                  <h4 className="font-bold mb-1">Ofertas Exclusivas</h4>
+                  <p className="text-xs opacity-80">Acceso anticipado a descuentos</p>
+                </div>
+                <div className="bg-black/10 p-4 rounded-xl opacity-50 relative group cursor-not-allowed">
+                  <h4 className="font-bold mb-1">Sorpresa de Cumpleaños</h4>
+                  <p className="text-xs opacity-80">Solo nivel Plata o superior</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Historial de Pedidos */}
         <div id="pedidos" className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
