@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, ShieldCheck, Star, Truck, Tag, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { auth, db } from '@/lib/firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const PERKS = [
   { icon: Star,       text: 'Acumula puntos Club Ananas con cada compra' },
@@ -33,11 +36,11 @@ export default function LoginPage() {
     if (red) setRedirect(red);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!email.trim()) { setError('Ingresa tu correo electrónico.'); return; }
+    if (!email.trim() || !password.trim()) { setError('Ingresa tu correo y contraseña.'); return; }
 
     if (email.trim().toLowerCase() === 'admin@jomstudio.com' && password.trim() === 'VZLA') {
       login({ id: 'admin', name: 'Administrador', email: 'admin@jomstudio.com', clubPoints: 0, clubLevel: 'Oro' });
@@ -46,16 +49,54 @@ export default function LoginPage() {
       return;
     }
 
-    login({
-      id: Math.random().toString(),
-      name: name || email.split('@')[0],
-      email: email.trim(),
-      cedula: cedula || undefined,
-      phone: phone || undefined,
-      clubPoints: 350,
-      clubLevel: 'Bronce',
-    });
-    router.push(redirectPath);
+    if (isRegistering) {
+      if (!name.trim() || !cedula.trim() || !phone.trim()) {
+        setError('Debes proporcionar tu Nombre, Cédula y Teléfono para registrarte de forma segura.');
+        return;
+      }
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        const uid = userCredential.user.uid;
+        
+        const userData = {
+          id: uid,
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          cedula: cedula.trim(),
+          phone: phone.trim(),
+          clubPoints: 350,
+          clubLevel: 'Bronce'
+        };
+
+        await setDoc(doc(db, 'users', uid), userData);
+        
+        login(userData as any);
+        router.push(redirectPath);
+      } catch (err: any) {
+        if (err.code === 'auth/email-already-in-use') {
+           setError('Este correo ya se encuentra registrado. Por favor, inicia sesión.');
+        } else if (err.code === 'auth/weak-password') {
+           setError('Tu contraseña es muy débil. Debe tener al menos 6 caracteres.');
+        } else {
+           setError('Error al registrar: ' + err.message);
+        }
+      }
+    } else {
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        const uid = userCredential.user.uid;
+
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+           login(userDoc.data() as any);
+           router.push(redirectPath);
+        } else {
+           setError('Tu cuenta existe, pero no encontramos tus datos. Contacta soporte.');
+        }
+      } catch (err: any) {
+        setError('Correo o contraseña equivocada. Si no tienes cuenta, regístrate.');
+      }
+    }
   };
 
   return (

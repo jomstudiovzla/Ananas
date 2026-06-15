@@ -438,59 +438,59 @@ return (
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex gap-4 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide whitespace-nowrap">
+      <div className="flex gap-1 md:gap-2 border-b border-gray-200 pb-0 overflow-x-auto scrollbar-hide whitespace-nowrap px-1">
         <button
           onClick={() => setActiveTab('orders')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-1.5 pb-2 px-1 md:px-2 font-bold text-xs md:text-sm transition-all border-b-2 ${
             activeTab === 'orders' 
               ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
-          <ClipboardList size={20} /> Pedidos en Espera ({pendingOrdersCount})
+          <ClipboardList size={16} /> Pedidos en Espera ({pendingOrdersCount})
         </button>
         <button
           onClick={() => setActiveTab('inventory')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-1.5 pb-2 px-1 md:px-2 font-bold text-xs md:text-sm transition-all border-b-2 ${
             activeTab === 'inventory' 
               ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
-          <Package size={20} /> Ver Inventario ({products.length})
+          <Package size={16} /> Ver Inventario ({products.length})
         </button>
         <button
           onClick={() => setActiveTab('csv')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-1.5 pb-2 px-1 md:px-2 font-bold text-xs md:text-sm transition-all border-b-2 ${
             activeTab === 'csv' 
               ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
-          <Upload size={20} /> Cargar Catálogo (CSV)
+          <Upload size={16} /> Cargar Catálogo
         </button>
         <button
           onClick={() => setActiveTab('rates')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-1.5 pb-2 px-1 md:px-2 font-bold text-xs md:text-sm transition-all border-b-2 ${
             activeTab === 'rates' 
               ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
-          <TrendingUp size={20} /> Configuración de Tasas
+          <TrendingUp size={16} /> Tasas
         </button>
         <button
           onClick={() => setActiveTab('notifications')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-1.5 pb-2 px-1 md:px-2 font-bold text-xs md:text-sm transition-all border-b-2 ${
             activeTab === 'notifications' 
               ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
           <div className="relative">
-            <Layers size={20} />
+            <Layers size={16} />
             {adminLogs.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] w-3.5 h-3.5 flex items-center justify-center rounded-full">
                 {adminLogs.length}
               </span>
             )}
@@ -499,13 +499,13 @@ return (
         </button>
         <button
           onClick={() => setActiveTab('stats')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-1.5 pb-2 px-1 md:px-2 font-bold text-xs md:text-sm transition-all border-b-2 ${
             activeTab === 'stats' 
               ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
-          <BarChart2 size={20} /> Estadísticas
+          <BarChart2 size={16} /> Estadísticas
         </button>
       </div>
 
