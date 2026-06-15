@@ -131,11 +131,11 @@ export default function AdminPage() {
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminEmail === 'admin@admin.com' && adminPassword === '1234') {
+    if (adminEmail === 'admin@jomstudio.com' && adminPassword === 'VZLA') {
       login({
         id: 'admin',
         name: 'Administrador',
-        email: 'admin@admin.com',
+        email: 'admin@jomstudio.com',
         clubPoints: 0,
         clubLevel: 'Oro'
       });
