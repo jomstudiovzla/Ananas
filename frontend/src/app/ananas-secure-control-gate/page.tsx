@@ -924,8 +924,10 @@ export default function AdminPage() {
                 <div className="bg-gray-50 rounded-2xl p-5 space-y-3 border border-gray-100">
                   <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5"><UserIcon size={14} className="text-ananas-green" /> Datos de Contacto</h4>
                   <div className="space-y-2 text-sm text-gray-600 mb-6">
-                    <p className="flex items-center gap-2"><strong className="text-gray-700 font-bold">Cliente:</strong> {selectedOrder.address ? '📦 Delivery' : '🏪 Pickup'}</p>
-                    <p className="flex items-center gap-2"><Mail size={14} className="text-gray-400" /> Correo: {selectedOrder.address ? 'cliente@ejemplo.com' : 'cliente@ejemplo.com'}</p>
+                    <p className="flex items-center gap-2"><strong className="text-gray-700 font-bold">Cliente:</strong> {selectedOrder.customerDetails?.name || 'Invitado'} ({selectedOrder.address ? '📦 Delivery' : '🏪 Pickup'})</p>
+                    {selectedOrder.customerDetails?.cedula && <p className="flex items-center gap-2"><strong>Cédula/RIF:</strong> {selectedOrder.customerDetails.cedula}</p>}
+                    <p className="flex items-center gap-2"><Mail size={14} className="text-gray-400" /> Correo: {selectedOrder.customerDetails?.email || 'N/A'}</p>
+                    {selectedOrder.customerDetails?.phone && <p className="flex items-center gap-2"><strong>Teléfono:</strong> {selectedOrder.customerDetails.phone}</p>}
                   </div>
                   {selectedOrder.shippingMethod === 'delivery' && selectedOrder.address && (
                     <div className="pt-2 border-t border-gray-200 mt-2 text-sm">

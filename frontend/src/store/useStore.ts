@@ -16,6 +16,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  cedula?: string;
+  phone?: string;
   clubPoints: number;
   clubLevel: 'Bronce' | 'Plata' | 'Oro';
 }
@@ -35,6 +37,12 @@ export interface Order {
   deliveryTime: string;
   status: 'Procesando' | 'Listo para retirar' | 'En camino' | 'Entregado' | 'Cancelado' | 'En revisión' | 'Facturado';
   paymentCapture?: string;
+  customerDetails?: {
+    name: string;
+    email: string;
+    cedula: string;
+    phone: string;
+  };
 }
 
 export interface ExchangeRates {
@@ -211,9 +219,41 @@ export const useStore = create<AppState>()(
       
       clearAdminLogs: () => set({ adminLogs: [] }),
       
-      updateOrderStatus: (id, status) => set((state) => ({
-        orders: state.orders.map((o) => o.id === id ? { ...o, status } : o)
-      })),
+      updateOrderStatus: (id, status) => set((state) => {
+        const order = state.orders.find(o => o.id === id);
+        if (!order) return state;
+
+        // If it's canceled, and it wasn't already canceled, return stock
+        if (status === 'Cancelado' && order.status !== 'Cancelado') {
+          const newProducts = [...state.products];
+          const newLogs: AdminLog[] = [];
+          
+          order.items.forEach(item => {
+            const productIndex = newProducts.findIndex(p => p.id === item.id);
+            if (productIndex !== -1) {
+              const product = { ...newProducts[productIndex] };
+              product.stock = (product.stock || 0) + item.quantity;
+              newProducts[productIndex] = product;
+              
+              newLogs.push({
+                id: Date.now().toString() + Math.random().toString(36).substring(7),
+                date: new Date().toISOString(),
+                message: `❌ Cancelación: Pedido ${id} anulado. +${item.quantity}x ${product.name} devueltos al Stock Tienda. Nuevo Stock Tienda: ${product.stock}.`
+              });
+            }
+          });
+
+          return {
+            orders: state.orders.map(o => o.id === id ? { ...o, status } : o),
+            products: newProducts,
+            adminLogs: [...newLogs, ...state.adminLogs]
+          };
+        }
+
+        return {
+          orders: state.orders.map(o => o.id === id ? { ...o, status } : o)
+        };
+      }),
       
       deductPoints: (points) => set((state) => {
         if (!state.user) return {};

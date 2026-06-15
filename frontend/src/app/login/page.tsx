@@ -8,6 +8,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [cedula, setCedula] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -44,6 +46,8 @@ export default function LoginPage() {
           id: Math.random().toString(),
           name: name || email.split('@')[0],
           email: email,
+          cedula: cedula || undefined,
+          phone: phone || undefined,
           clubPoints: 350,
           clubLevel: 'Bronce'
         });
@@ -64,17 +68,43 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {isRegistering && (
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1">Nombre completo</label>
-              <input 
-                required 
-                type="text" 
-                value={name} 
-                onChange={e => setName(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
-                placeholder="Juan Pérez"
-              />
-            </div>
+            <>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Nombre completo</label>
+                <input 
+                  required 
+                  type="text" 
+                  value={name} 
+                  onChange={e => setName(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
+                  placeholder="Juan Pérez"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Cédula o RIF</label>
+                  <input 
+                    required 
+                    type="text" 
+                    value={cedula} 
+                    onChange={e => setCedula(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
+                    placeholder="V-12345678"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Teléfono</label>
+                  <input 
+                    required 
+                    type="tel" 
+                    value={phone} 
+                    onChange={e => setPhone(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
+                    placeholder="0414-1234567"
+                  />
+                </div>
+              </div>
+            </>
           )}
           
           <div>

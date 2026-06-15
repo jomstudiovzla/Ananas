@@ -232,6 +232,31 @@ export default function AccountPage() {
                 </div>
               </div>
 
+              {/* Customer Info */}
+              {selectedOrder.customerDetails && (
+                <div className="bg-gray-50 rounded-2xl p-4 space-y-2 text-sm">
+                  <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-2">Datos del Cliente</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-xs text-gray-400 block">Nombre</span>
+                      <span className="font-bold text-gray-800">{selectedOrder.customerDetails.name}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-400 block">Cédula / RIF</span>
+                      <span className="font-bold text-gray-800">{selectedOrder.customerDetails.cedula}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-400 block">Correo</span>
+                      <span className="font-bold text-gray-800 break-all">{selectedOrder.customerDetails.email}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-400 block">Teléfono</span>
+                      <span className="font-bold text-gray-800">{selectedOrder.customerDetails.phone}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Delivery Info */}
               <div className="bg-gray-50 rounded-2xl p-4 space-y-2 text-sm">
                 <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-2">Detalles de Entrega</h4>

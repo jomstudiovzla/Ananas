@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const [usePoints, setUsePoints] = useState(false);
   const [form, setForm] = useState({
     name: '',
+    cedula: '',
     phone: '',
     address: '',
     deliveryDate: '',
@@ -55,7 +56,8 @@ export default function CheckoutPage() {
       setForm(prev => ({
         ...prev,
         name: user.name,
-        phone: prev.phone || ''
+        phone: user.phone || prev.phone || '',
+        cedula: user.cedula || prev.cedula || ''
       }));
     }
   }, [mounted, user, router]);
@@ -158,7 +160,13 @@ export default function CheckoutPage() {
         deliveryDate: form.deliveryDate,
         deliveryTime: form.deliveryTime,
         status: orderStatus,
-        paymentCapture: paymentCapture || undefined
+        paymentCapture: paymentCapture || undefined,
+        customerDetails: {
+          name: form.name,
+          email: user.email,
+          cedula: form.cedula,
+          phone: form.phone
+        }
       });
 
       // Deduct used points
@@ -329,6 +337,19 @@ export default function CheckoutPage() {
               </div>
 
               <div>
+                <label className="block text-sm font-bold text-gray-600 mb-2">Cédula o RIF</label>
+                <input 
+                  type="text" 
+                  name="cedula"
+                  required
+                  value={form.cedula}
+                  onChange={handleInputChange}
+                  placeholder="Ej. V-12345678"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:outline-none focus:border-ananas-green focus:bg-white transition"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
                 <label className="block text-sm font-bold text-gray-600 mb-2">Teléfono de Contacto</label>
                 <input 
                   type="tel" 
