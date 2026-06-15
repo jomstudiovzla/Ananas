@@ -14,7 +14,7 @@ const categories = [
 
 export default function Categories() {
   return (
-    <section className="max-w-7xl mx-auto py-20 px-4">
+    <section id="categories" className="max-w-7xl mx-auto py-20 px-4">
       <div className="flex items-center justify-center mb-12">
         <h2 className="text-3xl font-black text-gray-800 tracking-tight relative">
           EXPLORA POR CATEGORÍAS

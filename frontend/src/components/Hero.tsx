@@ -1,7 +1,29 @@
 "use client";
 import { motion } from 'framer-motion';
+import { useStore } from '@/store/useStore';
+import { useRouter } from 'next/navigation';
 
 export default function Hero() {
+  const user = useStore(state => state.user);
+  const router = useRouter();
+
+  const handleComprarAhora = () => {
+    if (!user) {
+      router.push('/login?redirect=%2F%23categories');
+    } else {
+      const element = document.getElementById('categories');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        router.push('/#categories');
+      }
+    }
+  };
+
+  const handleVerOfertas = () => {
+    router.push('/promociones');
+  };
+
   return (
     <section className="relative overflow-hidden bg-yellow-50">
       <div 
@@ -28,10 +50,16 @@ export default function Hero() {
             Frescura y calidad garantizada directo a la puerta de tu casa. Pide hoy y recibe en minutos, sin complicaciones.
           </p>
           <div className="flex gap-4">
-            <button className="bg-white text-ananas-dark px-8 py-4 rounded-full font-bold text-lg shadow-xl shadow-black/20 hover:bg-gray-50 hover:scale-105 transition-all">
+            <button 
+              onClick={handleComprarAhora}
+              className="bg-white text-ananas-dark px-8 py-4 rounded-full font-bold text-lg shadow-xl shadow-black/20 hover:bg-gray-50 hover:scale-105 transition-all cursor-pointer"
+            >
               Comprar Ahora
             </button>
-            <button className="bg-black/30 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-black/40 transition-all">
+            <button 
+              onClick={handleVerOfertas}
+              className="bg-black/30 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-black/40 transition-all cursor-pointer"
+            >
               Ver Ofertas
             </button>
           </div>
