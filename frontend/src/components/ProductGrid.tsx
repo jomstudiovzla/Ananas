@@ -1,5 +1,5 @@
 "use client";
-import { Plus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { Product } from '@/data/mockDb';
@@ -7,8 +7,7 @@ import { useState } from 'react';
 import ProductModal from './ProductModal';
 
 export default function ProductGrid({ products }: { products: Product[] }) {
-  const addToCart = useStore(state => state.addToCart);
-  const { currency, rates } = useStore();
+  const { addToCart, removeFromCart, updateQuantity, cart, currency, rates } = useStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   if (products.length === 0) {
@@ -30,15 +29,52 @@ export default function ProductGrid({ products }: { products: Product[] }) {
           transition={{ delay: i * 0.05 }}
           className="bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 relative group flex flex-col"
         >
-          <button 
-            onClick={(e) => {
-              e.preventDefault();
-              addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
-            }}
-            className="absolute top-5 right-5 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-md flex items-center justify-center text-ananas-green hover:bg-ananas-green hover:text-white transition-colors z-20"
-          >
-            <Plus size={20} strokeWidth={2.5} />
-          </button>
+          {(() => {
+            const cartItem = cart.find(item => item.id === p.id);
+            if (cartItem) {
+              return (
+                <div 
+                  className="absolute top-5 right-5 h-10 bg-ananas-green text-white rounded-full shadow-md flex items-center justify-between px-2 z-20 w-24"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <button 
+                    onClick={(e) => {
+                       e.preventDefault();
+                       if (cartItem.quantity > 1) {
+                         updateQuantity(p.id, cartItem.quantity - 1);
+                       } else {
+                         removeFromCart(p.id);
+                       }
+                    }}
+                    className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                  >
+                    <Minus size={16} strokeWidth={2.5} />
+                  </button>
+                  <span className="font-bold text-sm select-none">{cartItem.quantity}</span>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
+                    }}
+                    className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                  >
+                    <Plus size={16} strokeWidth={2.5} />
+                  </button>
+                </div>
+              );
+            }
+            return (
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
+                }}
+                className="absolute top-5 right-5 w-10 h-10 bg-white border border-gray-100 rounded-full shadow-md flex items-center justify-center text-ananas-green hover:bg-ananas-green hover:text-white transition-colors z-20"
+              >
+                <Plus size={20} strokeWidth={2.5} />
+              </button>
+            );
+          })()}
           
           <div onClick={() => setSelectedProduct(p as Product)} className="block flex-1 flex flex-col cursor-pointer">
             <div className="h-48 flex items-center justify-center mb-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 overflow-hidden relative">
