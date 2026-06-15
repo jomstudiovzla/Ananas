@@ -27,62 +27,17 @@ export default function Navbar() {
   };
 
   return (
-    <>
-      <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 relative flex items-center justify-center min-h-[36px] z-50">
-        <div className="flex items-center gap-1.5 text-center font-medium">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse mr-1"></span>
-          <span>Tasa del Día USD $ {mounted ? rates.usd.toFixed(2) : '587.41'} / € EUR {mounted ? rates.eur.toFixed(2) : '683.03'}</span>
-          <span className="hidden md:inline ml-2 text-white/80 border-l border-white/30 pl-3">Todos los precios ya están calculados con la tasa BCV del día.</span>
+      <div className="sticky top-0 z-50 w-full flex flex-col">
+        <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 relative flex items-center justify-center min-h-[36px]">
+          <div className="flex items-center gap-1.5 text-center font-medium">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse mr-1"></span>
+            <span>Tasa del Día USD $ {mounted ? rates.usd.toFixed(2) : '587.41'} / € EUR {mounted ? rates.eur.toFixed(2) : '683.03'}</span>
+            <span className="hidden md:inline ml-2 text-white/80 border-l border-white/30 pl-3">Todos los precios ya están calculados con la tasa BCV del día.</span>
+          </div>
         </div>
-        
-        <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2">
-          <button 
-            onClick={() => setIsCurrencyMenuOpen(!isCurrencyMenuOpen)}
-            className="flex items-center gap-1 cursor-pointer hover:text-gray-200 transition font-bold bg-transparent border-none text-white focus:outline-none text-[11px] sm:text-xs"
-          >
-            {currency === 'USD' ? 'USD ($) - Dólar' :
-             currency === 'EUR' ? 'EUR (€) - Euro' : 'VES (Bs.) - Bolívar'}
-            <ChevronDown size={14} />
-          </button>
-          
-          <AnimatePresence>
-            {isCurrencyMenuOpen && (
-              <motion.div 
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 5 }}
-                className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 text-gray-700 font-bold"
-                onMouseLeave={() => setIsCurrencyMenuOpen(false)}
-              >
-                <button 
-                  onClick={() => { setCurrency('USD'); setIsCurrencyMenuOpen(false); }}
-                  className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'USD' ? 'text-ananas-green bg-green-50/30' : ''}`}
-                >
-                  <span>USD ($) - Dólar</span>
-                  {currency === 'USD' && <Check size={14} className="text-ananas-green" />}
-                </button>
-                <button 
-                  onClick={() => { setCurrency('EUR'); setIsCurrencyMenuOpen(false); }}
-                  className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'EUR' ? 'text-ananas-green bg-green-50/30' : ''}`}
-                >
-                  <span>EUR (€) - Euro</span>
-                  {currency === 'EUR' && <Check size={14} className="text-ananas-green" />}
-                </button>
-                <button 
-                  onClick={() => { setCurrency('VES'); setIsCurrencyMenuOpen(false); }}
-                  className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'VES' ? 'text-ananas-green bg-green-50/30' : ''}`}
-                >
-                  <span>VES (Bs.) - Bolívar</span>
-                  {currency === 'VES' && <Check size={14} className="text-ananas-green" />}
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
 
-      <header className="sticky top-0 bg-white/90 backdrop-blur-md z-40 border-b border-gray-100 shadow-sm transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <header className="bg-white/90 backdrop-blur-md z-40 border-b border-gray-100 shadow-sm transition-all duration-300">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4 md:gap-6 relative">
             <div className="cursor-pointer hover:text-ananas-green transition relative" onMouseEnter={() => setIsMenuOpen(true)} onMouseLeave={() => setIsMenuOpen(false)}>
               <Menu className="text-gray-600 hover:text-ananas-green transition" />
@@ -140,6 +95,49 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-6">
+            <div className="relative">
+              <button 
+                onClick={() => setIsCurrencyMenuOpen(!isCurrencyMenuOpen)}
+                className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 border border-gray-200 text-gray-700 font-bold hover:border-ananas-green hover:text-ananas-green transition cursor-pointer"
+              >
+                {currency === 'USD' ? '$' : currency === 'EUR' ? '€' : 'Bs'}
+              </button>
+              
+              <AnimatePresence>
+                {isCurrencyMenuOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 text-gray-700 font-bold"
+                    onMouseLeave={() => setIsCurrencyMenuOpen(false)}
+                  >
+                    <button 
+                      onClick={() => { setCurrency('USD'); setIsCurrencyMenuOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'USD' ? 'text-ananas-green bg-green-50/30' : ''}`}
+                    >
+                      <span>USD ($) - Dólar</span>
+                      {currency === 'USD' && <Check size={14} className="text-ananas-green" />}
+                    </button>
+                    <button 
+                      onClick={() => { setCurrency('EUR'); setIsCurrencyMenuOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'EUR' ? 'text-ananas-green bg-green-50/30' : ''}`}
+                    >
+                      <span>EUR (€) - Euro</span>
+                      {currency === 'EUR' && <Check size={14} className="text-ananas-green" />}
+                    </button>
+                    <button 
+                      onClick={() => { setCurrency('VES'); setIsCurrencyMenuOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'VES' ? 'text-ananas-green bg-green-50/30' : ''}`}
+                    >
+                      <span>VES (Bs.) - Bolívar</span>
+                      {currency === 'VES' && <Check size={14} className="text-ananas-green" />}
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             <div className="flex items-center gap-2 cursor-pointer hover:text-ananas-green transition" onClick={() => router.push('/account')}>
               <User size={24} className={mounted && user ? "text-ananas-green" : "text-gray-600"} />
               {mounted && user && <span className="text-sm font-bold hidden lg:block">Nivel {user.clubLevel}</span>}
@@ -163,6 +161,7 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+      </div>
       
       <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
