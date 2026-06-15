@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Papa from 'papaparse';
 import { useStore, Order } from '@/store/useStore';
-import { Crown, Upload, CheckCircle, AlertTriangle, LogOut, Package, ClipboardList, ShieldAlert, Image as ImageIcon, Check, X, Mail, User as UserIcon, MapPin, DollarSign, TrendingUp, Search, Layers, Edit, BarChart2 } from 'lucide-react';
+import { Crown, Upload, CheckCircle, AlertTriangle, LogOut, Package, ClipboardList, ShieldAlert, Image as ImageIcon, Check, X, Mail, User as UserIcon, MapPin, DollarSign, TrendingUp, Search, Layers, Edit, BarChart2, Plus } from 'lucide-react';
 import { Product, products as initialProducts } from '@/data/mockDb';
 import { ProductRepository } from '@/core/infrastructure/repositories/ProductRepository';
 import { useRouter } from 'next/navigation';
@@ -61,6 +61,20 @@ export default function AdminPage() {
     unit: '',
   });
 
+  // Add product state
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [addProductForm, setAddProductForm] = useState({
+    id: '',
+    name: '',
+    price: 0,
+    category: 'viveres',
+    subcategory: '',
+    image: '',
+    unit: '1 Unidad',
+    stock: 0,
+    description: '',
+  });
+
   const startEdit = (p: Product) => {
     setEditingProduct(p);
     setEditForm({
@@ -95,6 +109,41 @@ export default function AdminPage() {
       setStatus({type: 'success', msg: `Producto "${editForm.name}" actualizado con éxito en Firebase.`});
     } catch (err: any) {
       setStatus({type: 'error', msg: `Error actualizando producto: ${err.message}`});
+    }
+  };
+
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newId = addProductForm.id.trim() || `prod-${Date.now()}`;
+    
+    // Check if ID already exists
+    if (products.some(p => p.id === newId)) {
+      if (!window.confirm(`El producto con ID ${newId} ya existe. ¿Deseas sobrescribirlo?`)) {
+        return;
+      }
+    }
+
+    const newProduct: Product = {
+      id: newId,
+      name: addProductForm.name,
+      price: Number(addProductForm.price),
+      category: addProductForm.category,
+      subcategory: addProductForm.subcategory || '',
+      image: addProductForm.image || '/images/products/default.jpg',
+      unit: addProductForm.unit,
+      stock: Number(addProductForm.stock),
+      description: addProductForm.description || undefined,
+    };
+
+    try {
+      await ProductRepository.setProduct(newProduct as any);
+      setShowAddProduct(false);
+      setAddProductForm({
+        id: '', name: '', price: 0, category: 'viveres', subcategory: '', image: '', unit: '1 Unidad', stock: 0, description: ''
+      });
+      setStatus({type: 'success', msg: `Producto "${newProduct.name}" creado con éxito en Firebase.`});
+    } catch (err: any) {
+      setStatus({type: 'error', msg: `Error creando producto: ${err.message}`});
     }
   };
 
@@ -593,8 +642,66 @@ return (
                 />
                 <Search className="absolute left-3.5 top-3 text-gray-400" size={16} />
               </div>
+              <button
+                onClick={() => setShowAddProduct(!showAddProduct)}
+                className="bg-ananas-green text-white font-bold px-4 py-2.5 rounded-full hover:bg-ananas-dark transition shadow-md flex items-center gap-2"
+              >
+                <Plus size={18} /> {showAddProduct ? 'Cancelar' : 'Cargar Producto'}
+              </button>
             </div>
           </div>
+
+          {showAddProduct && (
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-inner mb-6">
+              <h3 className="text-lg font-black text-gray-800 mb-4">Añadir Nuevo Producto (Firebase en Vivo)</h3>
+              <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">ID del Producto (Opcional)</label>
+                  <input type="text" value={addProductForm.id} onChange={e => setAddProductForm({...addProductForm, id: e.target.value})} className="border border-gray-200 rounded-lg p-2 text-sm" placeholder="Ej. p123" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">Nombre *</label>
+                  <input type="text" value={addProductForm.name} onChange={e => setAddProductForm({...addProductForm, name: e.target.value})} className="border border-gray-200 rounded-lg p-2 text-sm" required placeholder="Ej. Manzanas Frescas" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">Precio de Venta ($) *</label>
+                  <input type="number" step="0.01" value={addProductForm.price} onChange={e => setAddProductForm({...addProductForm, price: Number(e.target.value)})} className="border border-gray-200 rounded-lg p-2 text-sm" required />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">Categoría *</label>
+                  <select value={addProductForm.category} onChange={e => setAddProductForm({...addProductForm, category: e.target.value})} className="border border-gray-200 rounded-lg p-2 text-sm">
+                    <option value="frutas-vegetales">Frutas y Vegetales</option>
+                    <option value="refrigerados-congelados">Refrigerados y Congelados</option>
+                    <option value="viveres">Víveres</option>
+                    <option value="cuidado-personal-salud">Cuidado Personal</option>
+                    <option value="limpieza">Limpieza</option>
+                    <option value="licores">Licores</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">Subcategoría</label>
+                  <input type="text" value={addProductForm.subcategory} onChange={e => setAddProductForm({...addProductForm, subcategory: e.target.value})} className="border border-gray-200 rounded-lg p-2 text-sm" placeholder="Opcional" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">URL de Imagen</label>
+                  <input type="text" value={addProductForm.image} onChange={e => setAddProductForm({...addProductForm, image: e.target.value})} className="border border-gray-200 rounded-lg p-2 text-sm" placeholder="https://..." />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">Unidad</label>
+                  <input type="text" value={addProductForm.unit} onChange={e => setAddProductForm({...addProductForm, unit: e.target.value})} className="border border-gray-200 rounded-lg p-2 text-sm" placeholder="Ej. 1 Kg" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-gray-600">Stock Inicial</label>
+                  <input type="number" value={addProductForm.stock} onChange={e => setAddProductForm({...addProductForm, stock: Number(e.target.value)})} className="border border-gray-200 rounded-lg p-2 text-sm" />
+                </div>
+                <div className="md:col-span-2 lg:col-span-4 flex justify-end">
+                  <button type="submit" className="bg-ananas-green text-white font-bold py-2 px-6 rounded-lg hover:bg-ananas-dark transition shadow-md">
+                    Guardar en Firebase
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
