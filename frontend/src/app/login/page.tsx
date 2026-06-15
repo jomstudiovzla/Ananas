@@ -28,7 +28,7 @@ export default function LoginPage() {
     setError('');
 
     if (email) {
-      if (email === 'admin@jomstudio.com' && password === 'VZLA') {
+      if (email.trim().toLowerCase() === 'admin@jomstudio.com' && password.trim() === 'VZLA') {
         login({
           id: 'admin',
           name: 'Administrador',

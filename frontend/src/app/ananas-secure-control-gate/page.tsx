@@ -112,7 +112,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (mounted) {
       if (user) {
-        if (user.email === 'admin@admin.com') {
+        if (user.email === 'admin@jomstudio.com') {
           setIsAdminLoggedIn(true);
           sessionStorage.setItem('isAdminLoggedIn', 'true');
         } else {
@@ -131,7 +131,7 @@ export default function AdminPage() {
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminEmail === 'admin@jomstudio.com' && adminPassword === 'VZLA') {
+    if (adminEmail.trim().toLowerCase() === 'admin@jomstudio.com' && adminPassword.trim() === 'VZLA') {
       login({
         id: 'admin',
         name: 'Administrador',
@@ -154,7 +154,7 @@ export default function AdminPage() {
     setAdminPassword('');
     // Clear global session if it was admin
     const globalUser = useStore.getState().user;
-    if (globalUser && globalUser.email === 'admin@admin.com') {
+    if (globalUser && globalUser.email === 'admin@jomstudio.com') {
       useStore.getState().logout();
     }
   };
@@ -323,7 +323,7 @@ export default function AdminPage() {
                 value={adminEmail} 
                 onChange={e => setAdminEmail(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
-                placeholder="admin@admin.com"
+                placeholder="admin@jomstudio.com"
               />
             </div>
             
@@ -923,9 +923,9 @@ export default function AdminPage() {
                 {/* Contact details */}
                 <div className="bg-gray-50 rounded-2xl p-5 space-y-3 border border-gray-100">
                   <h4 className="font-bold text-gray-700 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5"><UserIcon size={14} className="text-ananas-green" /> Datos de Contacto</h4>
-                  <div className="space-y-2 text-sm text-gray-600">
+                  <div className="space-y-2 text-sm text-gray-600 mb-6">
                     <p className="flex items-center gap-2"><strong className="text-gray-700 font-bold">Cliente:</strong> {selectedOrder.address ? '📦 Delivery' : '🏪 Pickup'}</p>
-                    <p className="flex items-center gap-2"><Mail size={14} className="text-gray-400" /> Correo: admin@admin.com</p>
+                    <p className="flex items-center gap-2"><Mail size={14} className="text-gray-400" /> Correo: {selectedOrder.address ? 'cliente@ejemplo.com' : 'cliente@ejemplo.com'}</p>
                   </div>
                   {selectedOrder.shippingMethod === 'delivery' && selectedOrder.address && (
                     <div className="pt-2 border-t border-gray-200 mt-2 text-sm">
