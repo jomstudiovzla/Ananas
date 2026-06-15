@@ -29,6 +29,8 @@ export default function LoginPage() {
   const [error, setError]             = useState('');
   const [isRegistering, setIsReg]     = useState(false);
   const [redirectPath, setRedirect]   = useState('/account');
+  const [showExtraInfoForm, setShowExtraInfoForm] = useState(false);
+  const [googleUserData, setGoogleUserData] = useState<any>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -106,6 +108,63 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      setError('');
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      const uid = userCredential.user.uid;
+
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+         const data = userDoc.data() as any;
+         if (!data.cedula || !data.phone) {
+           setName(data.name || userCredential.user.displayName || '');
+           setCedula(data.cedula || '');
+           setPhone(data.phone || '');
+           setGoogleUserData({ uid, email: data.email, clubPoints: data.clubPoints || 350, clubLevel: data.clubLevel || 'Bronce' });
+           setShowExtraInfoForm(true);
+           return;
+         }
+         login(data);
+         router.push(redirectPath);
+      } else {
+         setName(userCredential.user.displayName || 'Usuario de Google');
+         setCedula('');
+         setPhone('');
+         setGoogleUserData({ uid, email: userCredential.user.email || '', clubPoints: 350, clubLevel: 'Bronce' });
+         setShowExtraInfoForm(true);
+      }
+    } catch (err: any) {
+      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        setError('Error al iniciar sesión con Google: ' + err.message);
+      }
+    }
+  };
+
+  const handleExtraInfoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !cedula.trim() || !phone.trim()) {
+      setError('Debes completar todos los datos para continuar.');
+      return;
+    }
+    
+    if (googleUserData) {
+      const userData = {
+        id: googleUserData.uid,
+        name: name.trim(),
+        email: googleUserData.email,
+        cedula: cedula.trim(),
+        phone: phone.trim(),
+        clubPoints: googleUserData.clubPoints,
+        clubLevel: googleUserData.clubLevel
+      };
+      await setDoc(doc(db, 'users', googleUserData.uid), userData);
+      login(userData as any);
+      router.push(redirectPath);
+    }
+  };
+
   return (
     <div className="min-h-screen flex">
 
@@ -180,16 +239,77 @@ export default function LoginPage() {
             </div>
 
             <AnimatePresence mode="wait">
-              <motion.div
-                key={isRegistering ? 'register' : 'login'}
-                initial={{ opacity: 0, x: isRegistering ? 20 : -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <h1 className="text-2xl font-black text-gray-800 mb-1">
-                  {isRegistering ? '¡Bienvenido a Ananas! 🍍' : 'Qué bueno verte de nuevo'}
-                </h1>
+              {showExtraInfoForm ? (
+                <motion.div
+                  key="extra-info"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <h1 className="text-2xl font-black text-gray-800 mb-1">
+                    Casi listo 🍍
+                  </h1>
+                  <p className="text-sm text-gray-500 font-medium mb-6">
+                    Por favor completa tus datos para agilizar tus compras en el futuro.
+                  </p>
+
+                  <form onSubmit={handleExtraInfoSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Nombre completo</label>
+                      <input
+                        required type="text" value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="Juan Pérez"
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Cédula / RIF</label>
+                        <input
+                          required type="text" value={cedula}
+                          onChange={e => setCedula(e.target.value)}
+                          placeholder="V-12345678"
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Teléfono</label>
+                        <input
+                          required type="tel" value={phone}
+                          onChange={e => setPhone(e.target.value)}
+                          placeholder="0414-000-0000"
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                        />
+                      </div>
+                    </div>
+
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-bold px-4 py-3 rounded-xl">
+                        {error}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      className="w-full bg-ananas-green hover:bg-ananas-dark text-white font-black text-base py-4 rounded-2xl transition-all shadow-lg shadow-ananas-green/25 mt-2"
+                    >
+                      Continuar a Ananas
+                    </button>
+                  </form>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={isRegistering ? 'register' : 'login'}
+                  initial={{ opacity: 0, x: isRegistering ? 20 : -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <h1 className="text-2xl font-black text-gray-800 mb-1">
+                    {isRegistering ? '¡Bienvenido a Ananas! 🍍' : 'Qué bueno verte de nuevo'}
+                  </h1>
                 <p className="text-sm text-gray-500 font-medium mb-6">
                   {isRegistering
                     ? 'Crea tu cuenta y empieza a acumular puntos Club Ananas.'
@@ -314,10 +434,11 @@ export default function LoginPage() {
                   {' '}y{' '}
                   <Link href="/privacidad" className="underline hover:text-ananas-green">Privacidad</Link>.
                 </p>
-              </motion.div>
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
