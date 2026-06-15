@@ -44,9 +44,7 @@ export default function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-2xl text-white"
         >
-          <span className="inline-block px-5 py-2 rounded-full bg-white/20 backdrop-blur-md text-sm font-bold tracking-widest mb-6 border border-white/30 shadow-sm">
-            🍍 DESDE 2026 SIRVIENDO A CARACAS ESTE
-          </span>
+
           <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tighter" style={{ textShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
             ¡Te llevamos <br/><span className="text-yellow-400">TU MERCADO!</span>
           </h1>

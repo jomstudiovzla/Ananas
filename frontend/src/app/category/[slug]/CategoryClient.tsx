@@ -54,6 +54,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
 
   useEffect(() => {
     setMounted(true);
+    window.scrollTo(0, 0); // Scroll al inicio de la página al entrar
   }, []);
 
   const category = categories.find(c => c.id === slug);
@@ -67,13 +68,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
     return true;
   });
 
-  // Apply sorting
-  const sortedProducts = [...categoryProducts].sort((a, b) => {
-    if (sortBy === 'price-asc') return a.price - b.price;
-    if (sortBy === 'price-desc') return b.price - a.price;
-    if (sortBy === 'popular') return ((b.sales || 0) + (b.views || 0)) - ((a.sales || 0) + (a.views || 0));
-    return 0;
-  });
+  const sortedProducts = categoryProducts;
 
   const theme = categoryThemes[category.id] || {
     title: 'text-gray-900',
@@ -96,32 +91,7 @@ export default function CategoryClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          {/* Sort + Search bar */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Buscar en esta sección..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="bg-white/80 backdrop-blur border border-white/60 rounded-full pl-8 pr-4 py-2 text-sm font-medium w-48 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder:text-gray-500"
-              />
-              <Search size={14} className="absolute left-2.5 top-2.5 text-gray-500" />
-            </div>
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value as typeof sortBy)}
-                className="appearance-none bg-white/80 backdrop-blur border border-white/60 rounded-full pl-3 pr-8 py-2 text-sm font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50"
-              >
-                <option value="default">Ordenar</option>
-                <option value="price-asc">Precio: menor primero</option>
-                <option value="price-desc">Precio: mayor primero</option>
-                <option value="popular">Más populares</option>
-              </select>
-              <ArrowUpDown size={12} className="absolute right-3 top-3 text-gray-500 pointer-events-none" />
-            </div>
-          </div>
+
         </div>
         <p className={`font-medium opacity-90 ${theme.desc}`}>Explora lo mejor de nuestra selección</p>
         

@@ -95,12 +95,7 @@ export default function Categories() {
                 {/* Glow overlay on hover */}
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-3xl" />
 
-                {/* Decorative circle */}
-                <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full" />
-                <div className="absolute -bottom-6 -left-4 w-16 h-16 bg-white/5 rounded-full" />
 
-                {/* Emoji background */}
-                <span className="absolute top-2 right-3 text-2xl opacity-20 select-none">{cat.emoji}</span>
 
                 {/* Icon */}
                 <div className="relative z-10 bg-white/15 p-3 rounded-2xl mb-3 group-hover:bg-white/25 transition-colors">

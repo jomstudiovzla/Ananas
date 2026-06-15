@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, ShoppingBasket, Search, User, ShoppingCart, ChevronDown, Download, ChevronRight, Check, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 import Link from 'next/link';
 import { categories } from '@/data/mockDb';
@@ -15,6 +15,7 @@ export default function Navbar() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  const pathname = usePathname();
   const { cart, user, rates, currency, setCurrency, userNotifications, markUserNotificationAsRead, adminLogs, markAdminLogAsRead, logout } = useStore();
   
   const isAdmin = user?.email === 'admin@jomstudio.com';
@@ -26,6 +27,11 @@ export default function Navbar() {
   // To avoid hydration mismatch, only render state after mount
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Clear search on route change
+  useEffect(() => {
+    setSearchQuery('');
+  }, [pathname]);
 
   const handleSearch = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && searchQuery.trim()) {

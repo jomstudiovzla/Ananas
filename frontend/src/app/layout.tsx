@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     description: "Frescura garantizada hasta la puerta de tu casa. Delivery rápido y seguro en Caracas.",
   },
   robots: "index, follow",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
