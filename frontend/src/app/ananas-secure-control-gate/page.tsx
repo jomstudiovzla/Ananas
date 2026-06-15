@@ -99,22 +99,6 @@ export default function AdminPage() {
     }
   };
 
-  const handleResetCatalog = async () => {
-    if (window.confirm("¿Estás seguro de que deseas restaurar el catálogo a los valores iniciales de fábrica? Esto sobrescribirá todos tus cambios, precios y descripciones personalizados.")) {
-      try {
-        setStatus({type: 'idle', msg: 'Restaurando catálogo en Firebase...'});
-        const batch = writeBatch(db);
-        initialProducts.forEach((p) => {
-          batch.set(doc(db, "products", p.id), p);
-        });
-        await batch.commit();
-        setStatus({type: 'success', msg: 'Catálogo restaurado a los valores por defecto.'});
-      } catch (err: any) {
-        setStatus({type: 'error', msg: 'Error al restaurar en Firebase: ' + err.message});
-      }
-    }
-  };
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -603,14 +587,6 @@ return (
             </div>
             
             <div className="flex flex-wrap items-center gap-3">
-              {/* Reset button */}
-              <button 
-                onClick={handleResetCatalog}
-                className="bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs px-4 py-2.5 rounded-full transition flex items-center gap-1.5 cursor-pointer border border-red-100"
-              >
-                Restaurar Defectos
-              </button>
-
               {/* Search Input */}
               <div className="relative w-full sm:max-w-xs">
                 <input
