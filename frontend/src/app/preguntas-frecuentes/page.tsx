@@ -91,7 +91,7 @@ export default function PreguntasFrecuentesPage() {
       <div className="mt-12 text-center bg-gray-50 rounded-2xl p-6 border border-gray-100">
         <p className="text-gray-600 font-bold mb-3">¿Aún tienes dudas o necesitas ayuda personalizada?</p>
         <a 
-          href="https://wa.me/584125551234" 
+          href="https://api.whatsapp.com/message/LEWKZHRFSOK6F1?autoload=1&app_absent=0" 
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold px-6 py-3 rounded-xl transition shadow-md shadow-green-500/10 cursor-pointer"

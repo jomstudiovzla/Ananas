@@ -64,7 +64,7 @@ export default function Footer() {
               </svg>
             </a>
             <a 
-              href="https://wa.me/584125551234" 
+              href="https://api.whatsapp.com/message/LEWKZHRFSOK6F1?autoload=1&app_absent=0" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 hover:bg-[#25D366] hover:text-white transition shadow-sm hover:shadow-md hover:-translate-y-1 transform cursor-pointer"
@@ -90,7 +90,7 @@ export default function Footer() {
             <li><Link href="/como-funciona" className="text-gray-500 hover:text-ananas-green transition font-medium">¿Cómo funciona Ananas?</Link></li>
             <li><Link href="/pagos" className="text-gray-500 hover:text-ananas-green transition font-medium">Métodos de Pago</Link></li>
             <li><Link href="/preguntas-frecuentes" className="text-gray-500 hover:text-ananas-green transition font-medium">Preguntas Frecuentes</Link></li>
-            <li><a href="https://wa.me/584125551234" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-ananas-green transition font-medium">Contáctanos</a></li>
+            <li><a href="https://api.whatsapp.com/message/LEWKZHRFSOK6F1?autoload=1&app_absent=0" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-ananas-green transition font-medium">Contáctanos</a></li>
           </ul>
         </div>
         
