@@ -21,7 +21,17 @@ export default function CatalogInitializer() {
     initialProducts.forEach((ip) => {
       const exists = currentProducts.some((p) => p.id === ip.id);
       if (!exists) {
-        currentProducts.push(ip);
+        currentProducts.push({
+          ...ip,
+          isActive: true,
+          labels: ip.labels || [],
+          unit: ip.unit || 'Unidad',
+          stock: ip.stock || 0,
+          warehouseStock: ip.warehouseStock || 0,
+          description: ip.description || '',
+          views: ip.views || 0,
+          sales: ip.sales || 0,
+        });
         hasChanges = true;
       }
     });

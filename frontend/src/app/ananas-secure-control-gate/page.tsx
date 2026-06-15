@@ -4,9 +4,8 @@ import Papa from 'papaparse';
 import { useStore, Order } from '@/store/useStore';
 import { Crown, Upload, CheckCircle, AlertTriangle, LogOut, Package, ClipboardList, ShieldAlert, Image as ImageIcon, Check, X, Mail, User as UserIcon, MapPin, DollarSign, TrendingUp, Search, Layers, Edit, BarChart2 } from 'lucide-react';
 import { Product, products as initialProducts } from '@/data/mockDb';
+import { ProductRepository } from '@/core/infrastructure/repositories/ProductRepository';
 import { useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase';
-import { writeBatch, doc, setDoc } from 'firebase/firestore';
 
 export default function AdminPage() {
   const setProducts = useStore(state => state.setProducts);
@@ -91,7 +90,7 @@ export default function AdminPage() {
     };
 
     try {
-      await setDoc(doc(db, "products", updatedProduct.id), updatedProduct);
+      await ProductRepository.updateProduct(updatedProduct.id, updatedProduct);
       setEditingProduct(null);
       setStatus({type: 'success', msg: `Producto "${editForm.name}" actualizado con éxito en Firebase.`});
     } catch (err: any) {
@@ -243,15 +242,11 @@ export default function AdminPage() {
             }
           });
 
-          const batch = writeBatch(db);
-          updatedProducts.forEach(p => {
-            batch.set(doc(db, "products", p.id), p);
-          });
-          await batch.commit();
+          const { validCount, errorCount } = await ProductRepository.batchUploadProducts(updatedProducts);
 
           setStatus({
             type: 'success', 
-            msg: `Fusión exitosa en Firebase: ${updatedCount} productos actualizados y ${addedCount} nuevos añadidos.`
+            msg: `Fusión exitosa usando Clean Architecture: ${validCount} productos válidos insertados. ${errorCount} errores.`
           });
         } catch (err) {
           setStatus({type: 'error', msg: 'Error procesando archivo: ' + (err as Error).message});

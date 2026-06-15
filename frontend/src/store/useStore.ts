@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { products as initialProducts, Product } from '@/data/mockDb';
+import { products as initialProducts } from '@/data/mockDb';
+import { ProductEntity as Product } from '@/core/domain/entities/Product';
 
 export interface CartItem {
   id: string;
@@ -136,7 +137,7 @@ export const useStore = create<AppState>()(
       cart: [],
       user: null,
       zone: null,
-      products: initialProducts,
+      products: initialProducts as Product[],
       orders: [],
       adminLogs: [],
       userNotifications: [],

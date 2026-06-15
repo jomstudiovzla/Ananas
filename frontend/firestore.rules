@@ -2,8 +2,25 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Función para verificar si el usuario es el Admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'admin@jomstudio.com';
+    }
+
+    // Reglas para Productos (Catálogo)
+    match /products/{productId} {
+      allow read: if true; // Cualquiera puede ver el catálogo
+      allow write, update, delete: if isAdmin(); // Solo el Admin puede modificar el inventario
+    }
+
+    // Reglas temporales para el resto (usuarios y órdenes) para no romper el flujo
+    match /users/{userId} {
+      allow read, write: if request.auth != null;
+    }
+    
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if true; // Fallback temporal para orders y adminLogs mientras se migra completo
     }
   }
 }

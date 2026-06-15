@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useStore, Order, AdminLog } from '@/store/useStore';
-import { Product } from '@/data/mockDb';
+import { ProductRepository } from '@/core/infrastructure/repositories/ProductRepository';
 
 export default function FirebaseSync() {
   const setProducts = useStore(state => state.setProducts);
@@ -14,14 +14,9 @@ export default function FirebaseSync() {
   useEffect(() => {
     console.log("FirebaseSync montado. Suscribiendo a colecciones...");
 
-    // Productos
-    const qProducts = query(collection(db, "products"));
-    const unsubProducts = onSnapshot(qProducts, (snapshot) => {
-      const prods: Product[] = [];
-      snapshot.forEach(doc => {
-        prods.push(doc.data() as Product);
-      });
-      setProducts(prods);
+    // Productos a través de Clean Architecture y Zod
+    const unsubProducts = ProductRepository.subscribeToAllProducts((prods) => {
+      setProducts(prods as any);
     });
 
     // Órdenes
