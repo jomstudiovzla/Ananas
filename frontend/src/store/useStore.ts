@@ -97,6 +97,7 @@ interface AppState {
   markAdminLogAsRead: (id: string) => void;
   markUserNotificationAsRead: (id: string) => void;
   clearUserNotifications: () => void;
+  addUserNotification: (notification: { title: string; message: string }) => void;
   incrementProductView: (productId: string) => void;
   setOrders: (orders: Order[]) => void;
   setAdminLogs: (logs: AdminLog[]) => void;
@@ -272,6 +273,16 @@ export const useStore = create<AppState>()(
       })),
 
       clearUserNotifications: () => set({ userNotifications: [] }),
+
+      addUserNotification: (notif) => set((state) => ({
+        userNotifications: [{
+          id: Date.now().toString() + Math.random().toString(36).substring(7),
+          date: new Date().toISOString(),
+          title: notif.title,
+          message: notif.message,
+          read: false
+        }, ...state.userNotifications]
+      })),
 
       incrementProductView: (productId) => set((state) => ({
         products: state.products.map(p => p.id === productId ? { ...p, views: (p.views || 0) + 1 } : p)

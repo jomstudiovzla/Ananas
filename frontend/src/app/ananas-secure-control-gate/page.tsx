@@ -355,19 +355,27 @@ export default function AdminPage() {
   }
 
   // ------------------ ADMIN PANEL DASHBOARD ------------------
-  return (
+return (
     <div className="max-w-7xl mx-auto py-12 px-4 min-h-[80vh] space-y-8 animate-in fade-in duration-300">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-6">
-        <div>
-          <h1 className="text-4xl font-black text-gray-800 tracking-tight">Panel de Control</h1>
-          <p className="text-gray-500 font-medium mt-1">Hola Administrador, gestiona los pedidos, estadísticas e inventario.</p>
+      <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-3xl p-8 text-white shadow-xl shadow-yellow-500/20 relative overflow-hidden flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+          <Crown size={160} className="-mr-10 -mt-10" />
+        </div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-2">
+            <Crown className="text-white" fill="currentColor" size={32} />
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight">Panel de Control</h1>
+          </div>
+          <p className="text-yellow-100 font-medium text-sm md:text-base">
+            Hola <span className="font-bold text-white">Administrador</span>, gestiona los pedidos, estadísticas e inventario en tiempo real.
+          </p>
         </div>
         <button 
           onClick={handleLogout}
-          className="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold px-5 py-3 rounded-xl transition cursor-pointer"
+          className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-bold px-4 py-2 rounded-xl transition flex items-center gap-2 w-fit relative z-10"
         >
-          <LogOut size={18} /> Salir del Panel
+          <LogOut size={16} /> Cerrar Sesión
         </button>
       </div>
 
@@ -415,12 +423,12 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex gap-4 border-b border-gray-200 pb-2">
+      <div className="flex gap-4 border-b border-gray-200 pb-2 overflow-x-auto scrollbar-hide whitespace-nowrap">
         <button
           onClick={() => setActiveTab('orders')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
             activeTab === 'orders' 
-              ? 'border-ananas-green text-ananas-green' 
+              ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -428,9 +436,9 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => setActiveTab('inventory')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
             activeTab === 'inventory' 
-              ? 'border-ananas-green text-ananas-green' 
+              ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -438,9 +446,9 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => setActiveTab('csv')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
             activeTab === 'csv' 
-              ? 'border-ananas-green text-ananas-green' 
+              ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -448,9 +456,9 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => setActiveTab('rates')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
             activeTab === 'rates' 
-              ? 'border-ananas-green text-ananas-green' 
+              ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -458,9 +466,9 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => setActiveTab('notifications')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
             activeTab === 'notifications' 
-              ? 'border-ananas-green text-ananas-green' 
+              ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -476,9 +484,9 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => setActiveTab('stats')}
-          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-base md:text-lg transition-all border-b-2 ${
             activeTab === 'stats' 
-              ? 'border-ananas-green text-ananas-green' 
+              ? 'border-yellow-500 text-yellow-600' 
               : 'border-transparent text-gray-400 hover:text-gray-600'
           }`}
         >

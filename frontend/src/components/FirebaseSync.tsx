@@ -27,11 +27,23 @@ export default function FirebaseSync() {
     });
 
     // Órdenes
+    let previousOrders: Record<string, string> = {};
     const qOrders = query(collection(db, "orders"));
     const unsubOrders = onSnapshot(qOrders, (snapshot) => {
       const ords: Order[] = [];
       snapshot.forEach(doc => {
-        ords.push(doc.data() as Order);
+        const order = doc.data() as Order;
+        ords.push(order);
+
+        if (previousOrders[order.id] && previousOrders[order.id] !== order.status) {
+          if (useStore.getState().user?.id !== 'admin') {
+            useStore.getState().addUserNotification({
+              title: `Pedido ${order.id}`,
+              message: `El estado de tu pedido ha cambiado a: ${order.status}`
+            });
+          }
+        }
+        previousOrders[order.id] = order.status;
       });
       // Ordenar localmente por fecha (las más recientes primero)
       ords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
