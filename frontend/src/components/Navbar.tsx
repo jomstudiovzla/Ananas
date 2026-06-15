@@ -15,7 +15,13 @@ export default function Navbar() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
-  const { cart, user, rates, currency, setCurrency, userNotifications, markUserNotificationAsRead } = useStore();
+  const { cart, user, rates, currency, setCurrency, userNotifications, markUserNotificationAsRead, adminLogs, markAdminLogAsRead, logout } = useStore();
+  
+  const isAdmin = user?.email === 'admin@jomstudio.com';
+  const notificationsToShow = isAdmin ? adminLogs : userNotifications;
+  const unreadCount = isAdmin 
+    ? adminLogs.filter(n => !n.read).length 
+    : userNotifications.filter(n => !n.read).length;
   
   // To avoid hydration mismatch, only render state after mount
   const [mounted, setMounted] = useState(false);
@@ -147,9 +153,9 @@ export default function Navbar() {
                   className="relative flex items-center justify-center p-2 rounded-full hover:bg-gray-50 transition text-gray-600 hover:text-ananas-green"
                 >
                   <Bell size={22} />
-                  {userNotifications.filter(n => !n.read).length > 0 && (
+                  {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-white">
-                      {userNotifications.filter(n => !n.read).length}
+                      {unreadCount}
                     </span>
                   )}
                 </button>
@@ -164,29 +170,33 @@ export default function Navbar() {
                       onMouseLeave={() => setIsNotificationsOpen(false)}
                     >
                       <div className="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-                        <h4 className="font-bold text-gray-800 text-sm">Notificaciones</h4>
-                        <span className="text-xs text-gray-500">{userNotifications.length} nuevas</span>
+                        <h4 className="font-bold text-gray-800 text-sm">{isAdmin ? 'Notificaciones Admin' : 'Notificaciones'}</h4>
+                        <span className="text-xs text-gray-500">{unreadCount} nuevas</span>
                       </div>
                       <div className="max-h-80 overflow-y-auto">
-                        {userNotifications.length === 0 ? (
+                        {notificationsToShow.length === 0 ? (
                           <div className="px-4 py-8 text-center text-gray-500 text-sm">
                             No tienes notificaciones
                           </div>
                         ) : (
-                          userNotifications.map((notif) => (
-                            <div 
-                              key={notif.id} 
-                              onClick={() => markUserNotificationAsRead(notif.id)}
-                              className={`px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer ${!notif.read ? 'bg-green-50/30' : ''}`}
-                            >
-                              <div className="flex justify-between items-start mb-1">
-                                <h5 className={`text-sm ${!notif.read ? 'font-bold text-gray-800' : 'font-medium text-gray-600'}`}>{notif.title}</h5>
-                                {!notif.read && <span className="w-2 h-2 bg-ananas-green rounded-full"></span>}
+                          notificationsToShow.map((notif) => {
+                            const isNotifAdmin = 'message' in notif && !('title' in notif);
+                            const title = isNotifAdmin ? 'Aviso del Sistema' : (notif as any).title;
+                            return (
+                              <div 
+                                key={notif.id} 
+                                onClick={() => isNotifAdmin ? markAdminLogAsRead(notif.id) : markUserNotificationAsRead(notif.id)}
+                                className={`px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer ${!notif.read ? 'bg-green-50/30' : ''}`}
+                              >
+                                <div className="flex justify-between items-start mb-1">
+                                  <h5 className={`text-sm ${!notif.read ? 'font-bold text-gray-800' : 'font-medium text-gray-600'}`}>{title}</h5>
+                                  {!notif.read && <span className="w-2 h-2 bg-ananas-green rounded-full"></span>}
+                                </div>
+                                <p className="text-xs text-gray-500">{notif.message}</p>
+                                <p className="text-[10px] text-gray-400 mt-1">{new Date(notif.date).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })}</p>
                               </div>
-                              <p className="text-xs text-gray-500">{notif.message}</p>
-                              <p className="text-[10px] text-gray-400 mt-1">{new Date(notif.date).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })}</p>
-                            </div>
-                          ))
+                            );
+                          })
                         )}
                       </div>
                     </motion.div>
@@ -195,9 +205,30 @@ export default function Navbar() {
               </div>
             )}
 
-            <div className="flex items-center gap-2 cursor-pointer hover:text-ananas-green transition" onClick={() => router.push('/account')}>
-              <User size={24} className={mounted && user ? "text-ananas-green" : "text-gray-600"} />
-              {mounted && user && <span className="text-sm font-bold hidden lg:block">Nivel {user.clubLevel}</span>}
+            <div className="relative group pb-4 -mb-4">
+              <div className="flex items-center gap-2 cursor-pointer hover:text-ananas-green transition" onClick={() => mounted && user ? router.push('/account') : router.push('/login')}>
+                <User size={24} className={mounted && user ? "text-ananas-green" : "text-gray-600"} />
+                {mounted && user && <span className="text-sm font-bold hidden lg:block">Nivel {user.clubLevel}</span>}
+              </div>
+
+              <div className="absolute right-0 top-[calc(100%-10px)] mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0">
+                {mounted && user ? (
+                  <>
+                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                      <p className="text-xs text-gray-500">Conectado como</p>
+                      <p className="text-sm font-bold text-gray-800 truncate">{user.name || 'Usuario'}</p>
+                    </div>
+                    {isAdmin ? (
+                      <button onClick={() => router.push('/ananas-secure-control-gate')} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition text-gray-700 font-bold">Panel Admin</button>
+                    ) : (
+                      <button onClick={() => router.push('/account')} className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 transition text-gray-700 font-bold">Mi Perfil</button>
+                    )}
+                    <button onClick={() => { logout(); router.push('/'); }} className="w-full text-left px-4 py-2.5 text-sm hover:bg-red-50 hover:text-red-600 transition text-gray-700">Cerrar Sesión</button>
+                  </>
+                ) : (
+                  <button onClick={() => router.push('/login')} className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition font-bold text-ananas-green">Iniciar Sesión</button>
+                )}
+              </div>
             </div>
             <div className="relative cursor-pointer group" onClick={() => setIsCartOpen(true)}>
               <ShoppingCart className="text-gray-600 group-hover:text-ananas-green transition" size={24} />

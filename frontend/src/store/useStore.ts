@@ -55,6 +55,7 @@ export interface AdminLog {
   id: string;
   date: string;
   message: string;
+  read?: boolean;
 }
 
 export interface UserNotification {
@@ -93,6 +94,7 @@ interface AppState {
   setIsAutoRates: (val: boolean) => void;
   setRates: (usd: number, eur: number) => void;
   clearAdminLogs: () => void;
+  markAdminLogAsRead: (id: string) => void;
   markUserNotificationAsRead: (id: string) => void;
   clearUserNotifications: () => void;
   incrementProductView: (productId: string) => void;
@@ -220,7 +222,8 @@ export const useStore = create<AppState>()(
             newLogs.push({
               id: Date.now().toString() + Math.random().toString(36).substring(7),
               date: new Date().toISOString(),
-              message: logMsg
+              message: logMsg,
+              read: false
             });
           }
         });
@@ -228,11 +231,24 @@ export const useStore = create<AppState>()(
         return {
           orders: [order, ...state.orders],
           products: newProducts,
-          adminLogs: [...newLogs, ...state.adminLogs]
+          adminLogs: [
+            {
+              id: Date.now().toString() + Math.random().toString(36).substring(7),
+              date: new Date().toISOString(),
+              message: `📦 Nuevo pedido #${order.id} por $${order.total.toFixed(2)}`,
+              read: false
+            },
+            ...newLogs, 
+            ...state.adminLogs
+          ]
         };
       }),
       
       clearAdminLogs: () => set({ adminLogs: [] }),
+      
+      markAdminLogAsRead: (id) => set((state) => ({
+        adminLogs: state.adminLogs.map(log => log.id === id ? { ...log, read: true } : log)
+      })),
       
       markUserNotificationAsRead: (id) => set((state) => ({
         userNotifications: state.userNotifications.map(n => n.id === id ? { ...n, read: true } : n)
