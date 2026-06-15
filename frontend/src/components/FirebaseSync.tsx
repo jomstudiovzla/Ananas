@@ -21,9 +21,7 @@ export default function FirebaseSync() {
       snapshot.forEach(doc => {
         prods.push(doc.data() as Product);
       });
-      if (prods.length > 0) {
-        setProducts(prods);
-      }
+      setProducts(prods);
     });
 
     // Órdenes

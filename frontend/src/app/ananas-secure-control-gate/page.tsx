@@ -2,9 +2,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Papa from 'papaparse';
 import { useStore, Order } from '@/store/useStore';
-import { Upload, CheckCircle, AlertTriangle, LogOut, Package, ClipboardList, ShieldAlert, Image as ImageIcon, Check, X, Mail, User as UserIcon, MapPin, DollarSign, TrendingUp, Search, Layers, Edit, BarChart2 } from 'lucide-react';
+import { Crown, Upload, CheckCircle, AlertTriangle, LogOut, Package, ClipboardList, ShieldAlert, Image as ImageIcon, Check, X, Mail, User as UserIcon, MapPin, DollarSign, TrendingUp, Search, Layers, Edit, BarChart2 } from 'lucide-react';
 import { Product, products as initialProducts } from '@/data/mockDb';
 import { useRouter } from 'next/navigation';
+import { db } from '@/lib/firebase';
+import { writeBatch, doc, setDoc } from 'firebase/firestore';
 
 export default function AdminPage() {
   const setProducts = useStore(state => state.setProducts);
@@ -73,35 +75,43 @@ export default function AdminPage() {
     });
   };
 
-  const handleSaveEdit = (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
 
-    const updatedProducts = products.map((p) => {
-      if (p.id === editingProduct.id) {
-        return {
-          ...p,
-          name: editForm.name,
-          price: Number(editForm.price),
-          providerPrice: editForm.providerPrice ? Number(editForm.providerPrice) : undefined,
-          stock: Number(editForm.stock),
-          warehouseStock: Number(editForm.warehouseStock),
-          description: editForm.description,
-          unit: editForm.unit,
-        };
-      }
-      return p;
-    });
+    const updatedProduct = {
+      ...editingProduct,
+      name: editForm.name,
+      price: Number(editForm.price),
+      providerPrice: editForm.providerPrice ? Number(editForm.providerPrice) : undefined,
+      stock: Number(editForm.stock),
+      warehouseStock: Number(editForm.warehouseStock),
+      description: editForm.description,
+      unit: editForm.unit,
+    };
 
-    setProducts(updatedProducts);
-    setEditingProduct(null);
-    setStatus({type: 'success', msg: `Producto "${editForm.name}" actualizado con éxito.`});
+    try {
+      await setDoc(doc(db, "products", updatedProduct.id), updatedProduct);
+      setEditingProduct(null);
+      setStatus({type: 'success', msg: `Producto "${editForm.name}" actualizado con éxito en Firebase.`});
+    } catch (err: any) {
+      setStatus({type: 'error', msg: `Error actualizando producto: ${err.message}`});
+    }
   };
 
-  const handleResetCatalog = () => {
+  const handleResetCatalog = async () => {
     if (window.confirm("¿Estás seguro de que deseas restaurar el catálogo a los valores iniciales de fábrica? Esto sobrescribirá todos tus cambios, precios y descripciones personalizados.")) {
-      setProducts(initialProducts);
-      setStatus({type: 'success', msg: 'Catálogo restaurado a los valores por defecto.'});
+      try {
+        setStatus({type: 'idle', msg: 'Restaurando catálogo en Firebase...'});
+        const batch = writeBatch(db);
+        initialProducts.forEach((p) => {
+          batch.set(doc(db, "products", p.id), p);
+        });
+        await batch.commit();
+        setStatus({type: 'success', msg: 'Catálogo restaurado a los valores por defecto.'});
+      } catch (err: any) {
+        setStatus({type: 'error', msg: 'Error al restaurar en Firebase: ' + err.message});
+      }
     }
   };
 
@@ -167,7 +177,7 @@ export default function AdminPage() {
       header: true,
       skipEmptyLines: true,
       dynamicTyping: true,
-      complete: (results) => {
+      complete: async (results) => {
         try {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const newProducts = results.data.map((row: any) => {
@@ -249,10 +259,15 @@ export default function AdminPage() {
             }
           });
 
-          setProducts(updatedProducts);
+          const batch = writeBatch(db);
+          updatedProducts.forEach(p => {
+            batch.set(doc(db, "products", p.id), p);
+          });
+          await batch.commit();
+
           setStatus({
             type: 'success', 
-            msg: `Fusión exitosa: ${updatedCount} productos actualizados y ${addedCount} nuevos añadidos.`
+            msg: `Fusión exitosa en Firebase: ${updatedCount} productos actualizados y ${addedCount} nuevos añadidos.`
           });
         } catch (err) {
           setStatus({type: 'error', msg: 'Error procesando archivo: ' + (err as Error).message});

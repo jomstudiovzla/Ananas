@@ -288,6 +288,7 @@ export const useStore = create<AppState>()(
         products: state.products.map(p => p.id === productId ? { ...p, views: (p.views || 0) + 1 } : p)
       })),
 
+
       updateOrderStatus: async (id, status) => {
         set((state) => {
           const order = state.orders.find(o => o.id === id);
