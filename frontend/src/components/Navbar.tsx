@@ -27,6 +27,7 @@ export default function Navbar() {
   };
 
   return (
+    <>
       <div className="sticky top-0 z-50 w-full flex flex-col">
         <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 relative flex items-center justify-center min-h-[36px]">
           <div className="flex items-center gap-1.5 text-center font-medium">
