@@ -616,11 +616,11 @@ export default function CheckoutPage() {
 
               {paymentMethod === 'cash' && (
                 <div className="text-sm text-gray-600 font-medium space-y-3 bg-white p-5 rounded-2xl border border-gray-100">
-                  <p className="font-bold text-gray-800 border-b pb-2">Instrucciones de Efectivo:</p>
+                  <p className="font-bold text-gray-800 border-b pb-2">Instrucciones de Efectivo (Pago Contra Entrega):</p>
                   <p>
                     {shippingMethod === 'delivery' 
-                      ? 'Paga en divisas en efectivo directamente al motorizado al recibir tu pedido. Por favor ten el monto exacto.' 
-                      : 'Realiza tu pago en caja (divisas o bolívares en efectivo) al retirar tu pedido por la tienda de San Luis.'}
+                      ? 'Paga en efectivo (divisas o bolívares) directamente al motorizado al recibir tu pedido en la puerta de tu casa. Por favor ten el monto exacto para facilitar el cambio.' 
+                      : 'Realiza tu pago en caja (divisas o bolívares en efectivo) al retirar tu pedido por nuestra tienda principal.'}
                   </p>
                   <div className="bg-yellow-50 p-3.5 rounded-xl border border-yellow-100 text-yellow-800 text-xs font-bold space-y-1">
                     <p>Si pagas en Bolívares en efectivo, el monto a entregar es:</p>
@@ -735,8 +735,21 @@ export default function CheckoutPage() {
               <span className="text-3xl font-black text-ananas-green">{convertAndFormatPrice(total, currency, rates)}</span>
             </div>
 
-            <div className="flex gap-2 items-center text-xs text-gray-400 justify-center">
-              <ShieldCheck size={16} /> <span>Transacción Segura SSL</span>
+            <div className="bg-green-50/50 border border-ananas-green/20 rounded-xl p-3 text-center">
+              <p className="text-[11px] text-gray-500">
+                Los precios en Bs. se calculan a la <strong>tasa oficial del BCV</strong> del día.
+                <br/>
+                <span className="text-gray-400">USD: Bs. {rates.usd.toFixed(2)} / EUR: Bs. {rates.eur.toFixed(2)}</span>
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
+              <div className="flex gap-2 items-center text-xs text-gray-500 justify-center">
+                <ShieldCheck size={16} className="text-ananas-green" /> <span className="font-medium">Transacción 100% Segura (SSL)</span>
+              </div>
+              <div className="flex gap-2 items-center text-xs text-gray-500 justify-center">
+                <CheckCircle2 size={16} className="text-ananas-green" /> <span className="font-medium">Frescura y Calidad Garantizada</span>
+              </div>
             </div>
 
             <button 

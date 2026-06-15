@@ -3,7 +3,8 @@ import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { ShoppingCart, Heart, Share2, Truck } from 'lucide-react';
+import { ShoppingCart, Heart, Share2, Truck, Home, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ProductClient({ id }: { id: string }) {
   const products = useStore(state => state.products);
@@ -15,7 +16,15 @@ export default function ProductClient({ id }: { id: string }) {
   if (!product) return notFound();
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-4">
+    <div className="max-w-7xl mx-auto py-8 px-4">
+      <nav className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-6 px-2">
+        <Link href="/" className="hover:text-ananas-green flex items-center gap-1 transition"><Home size={16} /> Inicio</Link>
+        <ChevronRight size={14} className="text-gray-300" />
+        <Link href={`/`} className="hover:text-ananas-green transition">{product.category}</Link>
+        <ChevronRight size={14} className="text-gray-300" />
+        <span className="text-gray-800 font-bold truncate max-w-[200px] sm:max-w-xs">{product.name}</span>
+      </nav>
+
       <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6 md:p-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           

@@ -2,6 +2,8 @@
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import ProductSection from "@/components/ProductSection";
+import HowItWorks from "@/components/HowItWorks";
+import TestimonialCarousel from "@/components/TestimonialCarousel";
 import { useStore } from "@/store/useStore";
 import { useEffect, useState } from "react";
 import { categories } from "@/data/mockDb";
@@ -35,6 +37,8 @@ export default function Home() {
           </>
         )}
       </div>
+      <HowItWorks />
+      <TestimonialCarousel />
     </>
   );
 }

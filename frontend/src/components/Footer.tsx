@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { ShoppingBasket, MessageCircle, Star, X, Check } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useStore } from '@/store/useStore';
 
 export default function Footer() {
   const [isTestimonialOpen, setIsTestimonialOpen] = useState(false);
@@ -10,6 +12,20 @@ export default function Footer() {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [comment, setComment] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [subscribeEmail, setSubscribeEmail] = useState('');
+  
+  const router = useRouter();
+  const { user } = useStore();
+
+  const handleSubscribe = () => {
+    if (!subscribeEmail.trim()) return;
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    setSubscribeEmail('');
+    alert('¡Te has suscrito exitosamente a nuestras ofertas semanales!');
+  };
 
   const handleSubmitTestimonial = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,14 +57,20 @@ export default function Footer() {
 
   return (
     <footer className="bg-white border-t border-gray-200 pt-20 pb-8 mt-16 relative">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-        <div className="col-span-1 md:col-span-1">
-          <div className="text-2xl font-black text-ananas-green flex items-center gap-2 mb-6">
+      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
+        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+          <div className="text-2xl font-black text-ananas-green flex items-center gap-2 mb-4">
             <ShoppingBasket size={32} /> ANANAS
           </div>
-          <p className="text-gray-500 text-sm leading-relaxed mb-6 font-medium">
-            El supermercado de confianza que lleva la frescura y la calidad directo a la puerta de tu casa.
+          <p className="text-gray-500 text-sm leading-relaxed mb-4 font-medium">
+            El supermercado de confianza que lleva la frescura y la calidad directo a la puerta de tu casa en Caracas.
           </p>
+          <div className="text-xs text-gray-400 mb-6 space-y-1">
+            <p><strong>Razón Social:</strong> Inversiones Ananas, C.A.</p>
+            <p><strong>RIF:</strong> J-12345678-9</p>
+            <p><strong>Sede:</strong> Caracas, Distrito Capital</p>
+            <p><strong>Teléfono:</strong> +58 412-0000000</p>
+          </div>
           <div className="flex gap-4">
             <a 
               href="https://www.instagram.com/ananasfruteria/" 
@@ -95,38 +117,67 @@ export default function Footer() {
           </div>
         </div>
         
-        <div>
+        <div className="col-span-1 lg:col-span-4 lg:pl-8">
           <h4 className="font-bold mb-6 text-gray-800 tracking-wide uppercase text-sm">Enlaces Útiles</h4>
-          <ul className="space-y-3">
-            <li><Link href="/como-funciona" className="text-gray-500 hover:text-ananas-green transition font-medium">¿Cómo funciona Ananas?</Link></li>
-            <li><Link href="/pagos" className="text-gray-500 hover:text-ananas-green transition font-medium">Métodos de Pago</Link></li>
-            <li><Link href="/preguntas-frecuentes" className="text-gray-500 hover:text-ananas-green transition font-medium">Preguntas Frecuentes</Link></li>
-            <li><button onClick={() => setIsTestimonialOpen(true)} className="text-gray-500 hover:text-ananas-green transition font-medium text-left">Comentarios</button></li>
-            <li><a href="https://api.whatsapp.com/message/LEWKZHRFSOK6F1?autoload=1&app_absent=0" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-ananas-green transition font-medium">Contáctanos</a></li>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
+            <li><Link href="/como-funciona" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">¿Cómo funciona Ananas?</Link></li>
+            <li><Link href="/delivery" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Delivery y Cobertura</Link></li>
+            <li><Link href="/pagos" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Métodos de Pago</Link></li>
+            <li><Link href="/preguntas-frecuentes" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Preguntas Frecuentes</Link></li>
+            <li><Link href="/comentarios" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Comentarios</Link></li>
+            <li><Link href="/terminos" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Términos y Condiciones</Link></li>
+            <li><Link href="/privacidad" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Políticas de Privacidad</Link></li>
+            <li><Link href="/devoluciones" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Políticas de Devolución</Link></li>
+            <li><a href="https://api.whatsapp.com/message/LEWKZHRFSOK6F1?autoload=1&app_absent=0" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Contáctanos</a></li>
           </ul>
         </div>
         
-        <div>
+        <div className="col-span-1 lg:col-span-2">
           <h4 className="font-bold text-gray-800 mb-6 uppercase tracking-wider text-sm">Tu Cuenta</h4>
           <ul className="space-y-3">
-            <li><Link href="/account" className="text-gray-500 hover:text-ananas-green transition font-medium">Mi Cuenta</Link></li>
-            <li><Link href="/account#pedidos" className="text-gray-500 hover:text-ananas-green transition font-medium">Mis Pedidos</Link></li>
-            <li><Link href="/cart" className="text-gray-500 hover:text-ananas-green transition font-medium">Carrito de Compras</Link></li>
+            <li><Link href="/account" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Mi Cuenta</Link></li>
+            <li><Link href="/account#pedidos" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Mis Pedidos</Link></li>
+            <li><Link href="/cart" className="text-gray-500 hover:text-ananas-green transition font-medium text-sm">Carrito de Compras</Link></li>
           </ul>
         </div>
 
-        <div>
+        <div className="col-span-1 md:col-span-2 lg:col-span-3">
           <h4 className="font-bold mb-6 text-gray-800 tracking-wide uppercase text-sm">Suscríbete</h4>
           <p className="text-sm font-medium text-gray-500 mb-4">Recibe las mejores ofertas semanales directo en tu correo.</p>
           <div className="flex shadow-sm rounded-xl overflow-hidden border border-gray-200 focus-within:border-ananas-green focus-within:ring-2 focus-within:ring-ananas-green/20 transition-all">
-            <input type="email" placeholder="Tu email" className="bg-gray-50 px-4 py-3 text-sm w-full focus:outline-none" />
-            <button className="bg-ananas-green text-white px-5 py-3 text-sm font-bold hover:bg-ananas-dark transition">Unirme</button>
+            <input 
+              type="email" 
+              placeholder="Tu email" 
+              className="bg-gray-50 px-4 py-3 text-sm w-full focus:outline-none" 
+              value={subscribeEmail}
+              onChange={(e) => setSubscribeEmail(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSubscribe()}
+            />
+            <button 
+              onClick={handleSubscribe}
+              className="bg-ananas-green text-white px-5 py-3 text-sm font-bold hover:bg-ananas-dark transition"
+            >
+              Unirme
+            </button>
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-gray-100 text-center text-sm font-medium text-gray-400 space-y-2">
-        <p className="text-xs text-gray-400 italic">Precios sujetos a cambios según la tasa oficial del día del BCV.</p>
-        <p>&copy; {new Date().getFullYear()} Ananas Frutería. Todos los derechos reservados.</p>
+      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-sm font-medium text-gray-400">
+        <div className="space-y-1">
+          <p>&copy; {new Date().getFullYear()} Ananas Frutería. Todos los derechos reservados.</p>
+          <p className="text-xs text-gray-400 italic">Precios sujetos a cambios según la tasa oficial del día del BCV.</p>
+        </div>
+        
+        {/* Cintillo Visual de Métodos de Pago */}
+        <div className="flex flex-col items-center md:items-end gap-2">
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pagos 100% Seguros</span>
+          <div className="flex gap-2 items-center opacity-70 hover:opacity-100 transition-opacity">
+            <div className="bg-gray-100 px-3 py-1.5 rounded text-xs font-black text-blue-800">Zelle</div>
+            <div className="bg-gray-100 px-3 py-1.5 rounded text-xs font-black text-[#006E51]">Pago Móvil</div>
+            <div className="bg-gray-100 px-3 py-1.5 rounded text-xs font-black text-green-700">$ Efectivo</div>
+            <div className="bg-gray-100 px-3 py-1.5 rounded text-xs font-black text-[#003087]">PayPal</div>
+          </div>
+        </div>
       </div>
 
       {/* Testimonial Form Modal */}
