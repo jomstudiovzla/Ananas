@@ -76,7 +76,7 @@ export default function Hero() {
                 <ShieldCheck size={20} />
                 <span>PAGOS 100% SEGUROS</span>
               </div>
-              <div className="flex gap-3 text-white/90">
+              <div className="flex flex-wrap justify-center sm:justify-start gap-y-2 gap-x-4 text-white/90 text-sm md:text-base mt-2 sm:mt-0">
                 <div className="flex items-center gap-1"><Smartphone size={16} /> Zelle / Pago Móvil</div>
                 <div className="flex items-center gap-1"><Banknote size={16} /> Efectivo</div>
                 <div className="flex items-center gap-1"><CreditCard size={16} /> PayPal / Tarjetas</div>

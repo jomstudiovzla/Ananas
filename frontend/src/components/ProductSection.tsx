@@ -27,8 +27,8 @@ export default function ProductSection({ title, products }: { title: string, cat
   };
   
   return (
-    <section className="max-w-7xl mx-auto py-12 px-4">
-      <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
+    <section className="max-w-7xl mx-auto py-12 px-0 sm:px-4">
+      <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4 px-4 sm:px-0">
         <h2 className="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-4 group">
           {title}
         </h2>
@@ -38,7 +38,7 @@ export default function ProductSection({ title, products }: { title: string, cat
         </div>
       </div>
 
-      <div ref={scrollRef} className="flex overflow-x-auto gap-6 pb-8 hide-scrollbar snap-x">
+      <div ref={scrollRef} className="flex overflow-x-auto gap-4 sm:gap-6 pb-8 px-4 sm:px-0 hide-scrollbar snap-x">
         {products.map((p, i) => (
           <motion.div 
             key={i}
@@ -46,7 +46,7 @@ export default function ProductSection({ title, products }: { title: string, cat
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="min-w-[220px] md:min-w-[260px] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 relative group snap-start flex flex-col"
+            className="w-[85vw] min-w-[85vw] sm:w-auto sm:min-w-[260px] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 relative group snap-center sm:snap-start flex flex-col"
           >
             {/* Badge stock bajo */}
             {p.stock !== undefined && p.stock <= 5 && p.stock > 0 && (
