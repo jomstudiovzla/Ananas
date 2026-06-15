@@ -5,10 +5,18 @@ import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { Product } from '@/data/mockDb';
 import { useState } from 'react';
 import ProductModal from './ProductModal';
+import CartToast from './CartToast';
 
 export default function ProductGrid({ products }: { products: Product[] }) {
   const { addToCart, removeFromCart, updateQuantity, cart, currency, rates } = useStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [toast, setToast] = useState<{ visible: boolean; name: string; image: string }>({ visible: false, name: '', image: '' });
+
+  const handleAddToCart = (p: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
+    setToast({ visible: true, name: p.name, image: p.image });
+  };
 
   if (products.length === 0) {
     return (
@@ -20,98 +28,116 @@ export default function ProductGrid({ products }: { products: Product[] }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {products.map((p, i) => (
-        <motion.div 
-          key={p.id}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: i * 0.05 }}
-          className="bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 relative group flex flex-col"
-        >
-          {(() => {
-            const cartItem = cart.find(item => item.id === p.id);
-            if (cartItem) {
-              return (
-                <div 
-                  className="absolute top-5 right-5 h-10 bg-ananas-green text-white rounded-full shadow-md flex items-center justify-between px-2 z-20 w-24"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <button 
-                    onClick={(e) => {
-                       e.preventDefault();
-                       if (cartItem.quantity > 1) {
-                         updateQuantity(p.id, cartItem.quantity - 1);
-                       } else {
-                         removeFromCart(p.id);
-                       }
-                    }}
-                    className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((p, i) => (
+          <motion.div 
+            key={p.id}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.05 }}
+            className="bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 relative group flex flex-col"
+          >
+            {/* Badge stock bajo */}
+            {p.stock !== undefined && p.stock <= 5 && p.stock > 0 && (
+              <span className="absolute top-4 left-4 bg-orange-100 text-orange-600 text-[10px] font-black px-2 py-1 rounded-lg z-20 uppercase tracking-wide">
+                ¡Solo {p.stock}!
+              </span>
+            )}
+            {p.stock === 0 && (
+              <span className="absolute top-4 left-4 bg-red-100 text-red-600 text-[10px] font-black px-2 py-1 rounded-lg z-20 uppercase tracking-wide">
+                Agotado
+              </span>
+            )}
+
+            {(() => {
+              const cartItem = cart.find(item => item.id === p.id);
+              if (cartItem) {
+                return (
+                  <div 
+                    className="absolute top-5 right-5 h-10 bg-ananas-green text-white rounded-full shadow-md flex items-center justify-between px-2 z-20 w-24"
+                    onClick={(e) => e.preventDefault()}
                   >
-                    <Minus size={16} strokeWidth={2.5} />
-                  </button>
-                  <span className="font-bold text-sm select-none">{cartItem.quantity}</span>
-                  <button 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
-                    }}
-                    className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-                  >
-                    <Plus size={16} strokeWidth={2.5} />
-                  </button>
-                </div>
-              );
-            }
-            return null;
-          })()}
+                    <button 
+                      onClick={(e) => {
+                         e.preventDefault();
+                         if (cartItem.quantity > 1) {
+                           updateQuantity(p.id, cartItem.quantity - 1);
+                         } else {
+                           removeFromCart(p.id);
+                         }
+                      }}
+                      className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                    >
+                      <Minus size={16} strokeWidth={2.5} />
+                    </button>
+                    <span className="font-bold text-sm select-none">{cartItem.quantity}</span>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
+                      }}
+                      className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                    >
+                      <Plus size={16} strokeWidth={2.5} />
+                    </button>
+                  </div>
+                );
+              }
+              return null;
+            })()}
           
-          <div onClick={() => setSelectedProduct(p as Product)} className="block flex-1 flex flex-col cursor-pointer">
-            <div className="h-48 flex items-center justify-center mb-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 overflow-hidden relative">
-              <div className="absolute inset-0 mix-blend-overlay bg-black/5 rounded-2xl"></div>
-              <motion.img 
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-                src={p.image} 
-                alt={p.name} 
-                className="max-h-full object-contain mix-blend-multiply drop-shadow-sm z-10" 
-              />
-              {p.labels && p.labels.map(label => (
-                <span key={label} className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-black px-2 py-1 rounded-md z-10">
-                  {label}
-                </span>
-              ))}
-            </div>
+            <div onClick={() => setSelectedProduct(p as Product)} className="block flex-1 flex flex-col cursor-pointer">
+              <div className="h-48 flex items-center justify-center mb-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 overflow-hidden relative">
+                <div className="absolute inset-0 mix-blend-overlay bg-black/5 rounded-2xl"></div>
+                <motion.img 
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  src={p.image} 
+                  alt={p.name} 
+                  className="max-h-full object-contain mix-blend-multiply drop-shadow-sm z-10" 
+                />
+                {p.labels && p.labels.map(label => (
+                  <span key={label} className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-black px-2 py-1 rounded-md z-10">
+                    {label}
+                  </span>
+                ))}
+              </div>
             
-            <div className="mt-auto">
-              <h3 className="text-sm font-bold text-gray-500 mb-2 uppercase leading-snug line-clamp-2 min-h-[40px] group-hover:text-ananas-dark transition">{p.name}</h3>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-2xl font-black text-gray-800">{convertAndFormatPrice(p.price, currency, rates)}</p>
-                <span className="text-xs font-bold text-ananas-dark bg-ananas-green/10 px-2 py-1 rounded-lg border border-ananas-green/20">{p.unit || '1 Kg'}</span>
-              </div>
+              <div className="mt-auto">
+                <h3 className="text-sm font-bold text-gray-500 mb-2 uppercase leading-snug line-clamp-2 min-h-[40px] group-hover:text-ananas-dark transition">{p.name}</h3>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-2xl font-black text-gray-800">{convertAndFormatPrice(p.price, currency, rates)}</p>
+                  <span className="text-xs font-bold text-ananas-dark bg-ananas-green/10 px-2 py-1 rounded-lg border border-ananas-green/20">{p.unit || '1 Kg'}</span>
+                </div>
 
-              <div className="text-[10px] font-medium text-gray-400 border-b border-gray-100 pb-3 mb-3 text-center">
-                {p.category === 'refrigerados-congelados' ? '❄️ Cadena de frío garantizada' :
-                 p.category === 'frutas-vegetales' ? '🌱 Seleccionado el mismo día' : 
-                 '📦 Stock actualizado diario'}
-              </div>
+                <div className="text-[10px] font-medium text-gray-400 border-b border-gray-100 pb-3 mb-3 text-center">
+                  {p.category === 'refrigerados-congelados' ? '❄️ Cadena de frío garantizada' :
+                   p.category === 'frutas-vegetales' ? '🌱 Seleccionado el mismo día' : 
+                   '📦 Stock actualizado diario'}
+                </div>
 
-              {!cart.find(item => item.id === p.id) && (
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
-                  }}
-                  className="w-full bg-ananas-green text-white font-bold py-2.5 rounded-xl hover:bg-ananas-dark transition shadow-md shadow-ananas-green/20 flex items-center justify-center gap-2"
-                >
-                  <Plus size={16} strokeWidth={2.5} /> Agregar
-                </button>
-              )}
+                {!cart.find(item => item.id === p.id) && (
+                  <button 
+                    disabled={p.stock === 0}
+                    onClick={(e) => handleAddToCart(p, e)}
+                    className="w-full bg-ananas-green disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl hover:bg-ananas-dark transition shadow-md shadow-ananas-green/20 flex items-center justify-center gap-2"
+                  >
+                    <Plus size={16} strokeWidth={2.5} /> {p.stock === 0 ? 'Sin stock' : 'Agregar'}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        </motion.div>
-      ))}
+          </motion.div>
+        ))}
+      </div>
       <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
-    </div>
+      <CartToast 
+        visible={toast.visible} 
+        message={toast.name} 
+        image={toast.image}
+        onDismiss={() => setToast(t => ({ ...t, visible: false }))} 
+      />
+    </>
   );
 }

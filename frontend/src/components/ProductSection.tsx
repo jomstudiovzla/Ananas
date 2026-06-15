@@ -5,11 +5,19 @@ import { motion } from 'framer-motion';
 import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { Product } from '@/data/mockDb';
 import ProductModal from './ProductModal';
+import CartToast from './CartToast';
 
 export default function ProductSection({ title, products }: { title: string, categoryId: string, products: Product[] }) {
   const { addToCart, removeFromCart, updateQuantity, cart, currency, rates } = useStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [toast, setToast] = useState<{ visible: boolean; name: string; image: string }>({ visible: false, name: '', image: '' });
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleAddToCart = (p: Product, e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
+    setToast({ visible: true, name: p.name, image: p.image });
+  };
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -40,6 +48,17 @@ export default function ProductSection({ title, products }: { title: string, cat
             transition={{ delay: i * 0.1 }}
             className="min-w-[220px] md:min-w-[260px] bg-white rounded-[1.5rem] p-5 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 relative group snap-start flex flex-col"
           >
+            {/* Badge stock bajo */}
+            {p.stock !== undefined && p.stock <= 5 && p.stock > 0 && (
+              <span className="absolute top-4 left-4 bg-orange-100 text-orange-600 text-[10px] font-black px-2 py-1 rounded-lg z-20 uppercase tracking-wide">
+                ¡Solo {p.stock}!
+              </span>
+            )}
+            {p.stock === 0 && (
+              <span className="absolute top-4 left-4 bg-red-100 text-red-600 text-[10px] font-black px-2 py-1 rounded-lg z-20 uppercase tracking-wide">
+                Agotado
+              </span>
+            )}
             {(() => {
               const cartItem = cart.find(item => item.id === p.id);
               if (cartItem) {
@@ -104,13 +123,11 @@ export default function ProductSection({ title, products }: { title: string, cat
 
                 {!cart.find(item => item.id === p.id) && (
                   <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToCart({ id: p.id, name: p.name, price: p.price, category: p.category, image: p.image, unit: p.unit || '1 Unidad' });
-                    }}
-                    className="w-full bg-ananas-green text-white font-bold py-2.5 rounded-xl hover:bg-ananas-dark transition shadow-md shadow-ananas-green/20 flex items-center justify-center gap-2"
+                    disabled={p.stock === 0}
+                    onClick={(e) => handleAddToCart(p, e)}
+                    className="w-full bg-ananas-green disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl hover:bg-ananas-dark transition shadow-md shadow-ananas-green/20 flex items-center justify-center gap-2"
                   >
-                    <Plus size={16} strokeWidth={2.5} /> Agregar
+                    <Plus size={16} strokeWidth={2.5} /> {p.stock === 0 ? 'Sin stock' : 'Agregar'}
                   </button>
                 )}
               </div>
@@ -119,6 +136,12 @@ export default function ProductSection({ title, products }: { title: string, cat
         ))}
       </div>
       <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+      <CartToast 
+        visible={toast.visible} 
+        message={toast.name} 
+        image={toast.image}
+        onDismiss={() => setToast(t => ({ ...t, visible: false }))} 
+      />
     </section>
   );
 }
