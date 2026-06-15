@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ZoneSelector from "@/components/ZoneSelector";
 import CatalogInitializer from "@/components/CatalogInitializer";
+import FirebaseSync from "@/components/FirebaseSync";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.className} antialiased`}>
+        <FirebaseSync />
         <CatalogInitializer />
         <ZoneSelector />
         <Navbar />

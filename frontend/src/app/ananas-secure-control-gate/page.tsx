@@ -32,7 +32,7 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
 
   // Dashboard layout state
-  const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'csv' | 'rates' | 'notifications'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'csv' | 'rates' | 'notifications' | 'stats'>('orders');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   

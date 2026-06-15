@@ -98,6 +98,8 @@ interface AppState {
   markUserNotificationAsRead: (id: string) => void;
   clearUserNotifications: () => void;
   incrementProductView: (productId: string) => void;
+  setOrders: (orders: Order[]) => void;
+  setAdminLogs: (logs: AdminLog[]) => void;
 }
 
 export function convertPrice(priceInUSD: number, currency: 'USD' | 'EUR' | 'VES', rates: ExchangeRates): number {
@@ -147,6 +149,8 @@ export const useStore = create<AppState>()(
       
       setCurrency: (currency) => set({ currency }),
       setProducts: (products) => set({ products }),
+      setOrders: (orders) => set({ orders }),
+      setAdminLogs: (adminLogs) => set({ adminLogs }),
       setIsAutoRates: (isAutoRates) => set({ isAutoRates }),
       setRates: (usd, eur) => set({
         rates: {
@@ -182,67 +186,80 @@ export const useStore = create<AppState>()(
       
       logout: () => set({ user: null }),
       
-      placeOrder: (order) => set((state) => {
-        const newLogs: AdminLog[] = [];
-        const newProducts = [...state.products];
+      placeOrder: async (order) => {
+        // En Firebase, no actualizamos el estado de Zustand directamente aquí,
+        // lo hacemos escribiendo en Firestore, y FirebaseSync actualizará Zustand.
+        // Solo para feedback inmediato, lo actualizaremos temporalmente
+        set((state) => ({ orders: [order, ...state.orders] }));
         
-        order.items.forEach(item => {
-          const productIndex = newProducts.findIndex(p => p.id === item.id);
-          if (productIndex !== -1) {
-            const product = { ...newProducts[productIndex] };
-            let currentStock = product.stock || 0;
-            let currentWarehouse = product.warehouseStock || 0;
-            
-            const oldStock = currentStock;
-            currentStock -= item.quantity;
-            
-            let transfer = 0;
-            if (currentStock < 5) {
-              const needed = 15 - currentStock;
-              if (needed > 0 && currentWarehouse > 0) {
-                transfer = Math.min(needed, currentWarehouse);
-                currentStock += transfer;
-                currentWarehouse -= transfer;
-              }
-            }
-            
-            product.stock = currentStock;
-            product.warehouseStock = currentWarehouse;
-            newProducts[productIndex] = product;
-            
-            let logMsg = `🛍️ Venta: ${item.quantity}x ${product.name}. Stock anterior: ${oldStock}.`;
-            if (transfer > 0) {
-              logMsg += ` 🔄 Reposición automática: +${transfer} desde almacén. Nuevo Stock Tienda: ${currentStock}. Almacén restante: ${currentWarehouse}.`;
-            } else {
-              logMsg += ` Nuevo Stock Tienda: ${currentStock}.`;
-            }
+        try {
+          const { db } = await import('@/lib/firebase');
+          const { doc, setDoc, runTransaction } = await import('firebase/firestore');
 
-            product.sales = (product.sales || 0) + item.quantity;
-            
-            newLogs.push({
-              id: Date.now().toString() + Math.random().toString(36).substring(7),
-              date: new Date().toISOString(),
-              message: logMsg,
-              read: false
-            });
+          // Crear orden
+          await setDoc(doc(db, "orders", order.id), order);
+          
+          // Log de admin para orden
+          const adminLogId = Date.now().toString() + Math.random().toString(36).substring(7);
+          await setDoc(doc(db, "adminLogs", adminLogId), {
+            id: adminLogId,
+            date: new Date().toISOString(),
+            message: `📦 Nuevo pedido #${order.id} por $${order.total.toFixed(2)}`,
+            read: false
+          });
+
+          // Restar stock
+          for (const item of order.items) {
+             const productRef = doc(db, "products", item.id);
+             await runTransaction(db, async (transaction) => {
+               const productDoc = await transaction.get(productRef);
+               if (!productDoc.exists()) return;
+               
+               const product = productDoc.data();
+               let currentStock = product.stock || 0;
+               let currentWarehouse = product.warehouseStock || 0;
+               const oldStock = currentStock;
+               currentStock -= item.quantity;
+               
+               let transfer = 0;
+               if (currentStock < 5) {
+                 const needed = 15 - currentStock;
+                 if (needed > 0 && currentWarehouse > 0) {
+                   transfer = Math.min(needed, currentWarehouse);
+                   currentStock += transfer;
+                   currentWarehouse -= transfer;
+                 }
+               }
+               
+               const sales = (product.sales || 0) + item.quantity;
+               
+               transaction.update(productRef, {
+                 stock: currentStock,
+                 warehouseStock: currentWarehouse,
+                 sales
+               });
+
+               // Log
+               let logMsg = `🛍️ Venta: ${item.quantity}x ${product.name}. Stock anterior: ${oldStock}.`;
+               if (transfer > 0) {
+                 logMsg += ` 🔄 Reposición automática: +${transfer} desde almacén. Nuevo Stock Tienda: ${currentStock}. Almacén restante: ${currentWarehouse}.`;
+               } else {
+                 logMsg += ` Nuevo Stock Tienda: ${currentStock}.`;
+               }
+               const stockLogId = Date.now().toString() + Math.random().toString(36).substring(7);
+               const logRef = doc(db, "adminLogs", stockLogId);
+               transaction.set(logRef, {
+                 id: stockLogId,
+                 date: new Date().toISOString(),
+                 message: logMsg,
+                 read: false
+               });
+             });
           }
-        });
-
-        return {
-          orders: [order, ...state.orders],
-          products: newProducts,
-          adminLogs: [
-            {
-              id: Date.now().toString() + Math.random().toString(36).substring(7),
-              date: new Date().toISOString(),
-              message: `📦 Nuevo pedido #${order.id} por $${order.total.toFixed(2)}`,
-              read: false
-            },
-            ...newLogs, 
-            ...state.adminLogs
-          ]
-        };
-      }),
+        } catch (error) {
+           console.error("Error writing order to Firestore", error);
+        }
+      },
       
       clearAdminLogs: () => set({ adminLogs: [] }),
       
@@ -260,56 +277,66 @@ export const useStore = create<AppState>()(
         products: state.products.map(p => p.id === productId ? { ...p, views: (p.views || 0) + 1 } : p)
       })),
 
-      updateOrderStatus: (id, status) => set((state) => {
-        const order = state.orders.find(o => o.id === id);
-        if (!order) return state;
+      updateOrderStatus: async (id, status) => {
+        set((state) => {
+          const order = state.orders.find(o => o.id === id);
+          if (!order) return state;
 
-        let newUserNotifications = [...state.userNotifications];
-        
-        // Notify the user if status changed
-        if (order.status !== status) {
-          newUserNotifications.unshift({
-            id: Date.now().toString() + Math.random().toString(36).substring(7),
-            date: new Date().toISOString(),
-            title: `Pedido ${id}`,
-            message: `El estado de tu pedido ha cambiado a: ${status}.`,
-            read: false
-          });
-        }
-
-        // If it's canceled, and it wasn't already canceled, return stock
-        if (status === 'Cancelado' && order.status !== 'Cancelado') {
-          const newProducts = [...state.products];
-          const newLogs: AdminLog[] = [];
-          
-          order.items.forEach(item => {
-            const productIndex = newProducts.findIndex(p => p.id === item.id);
-            if (productIndex !== -1) {
-              const product = { ...newProducts[productIndex] };
-              product.stock = (product.stock || 0) + item.quantity;
-              newProducts[productIndex] = product;
-              
-              newLogs.push({
-                id: Date.now().toString() + Math.random().toString(36).substring(7),
-                date: new Date().toISOString(),
-                message: `❌ Cancelación: Pedido ${id} anulado. +${item.quantity}x ${product.name} devueltos al Stock Tienda. Nuevo Stock Tienda: ${product.stock}.`
-              });
-            }
-          });
+          let newUserNotifications = [...state.userNotifications];
+          if (order.status !== status) {
+            newUserNotifications.unshift({
+              id: Date.now().toString() + Math.random().toString(36).substring(7),
+              date: new Date().toISOString(),
+              title: `Pedido ${id}`,
+              message: `El estado de tu pedido ha cambiado a: ${status}.`,
+              read: false
+            });
+          }
 
           return {
             orders: state.orders.map(o => o.id === id ? { ...o, status } : o),
-            products: newProducts,
-            adminLogs: [...newLogs, ...state.adminLogs],
             userNotifications: newUserNotifications
           };
-        }
+        });
 
-        return {
-          orders: state.orders.map(o => o.id === id ? { ...o, status } : o),
-          userNotifications: newUserNotifications
-        };
-      }),
+        try {
+          const { db } = await import('@/lib/firebase');
+          const { doc, updateDoc, runTransaction } = await import('firebase/firestore');
+          
+          const orderRef = doc(db, "orders", id);
+          await updateDoc(orderRef, { status });
+
+          // FirebaseSync actuará como fuente de verdad para el resto (logs, stock, etc).
+          // Sin embargo, si es cancelado, debemos procesar la devolución de stock en Firebase.
+          if (status === 'Cancelado') {
+             const state = useStore.getState();
+             const order = state.orders.find(o => o.id === id);
+             if (order) {
+                for (const item of order.items) {
+                   const productRef = doc(db, "products", item.id);
+                   await runTransaction(db, async (transaction) => {
+                     const pDoc = await transaction.get(productRef);
+                     if (pDoc.exists()) {
+                       const product = pDoc.data();
+                       const newStock = (product.stock || 0) + item.quantity;
+                       transaction.update(productRef, { stock: newStock });
+
+                       const stockLogId = Date.now().toString() + Math.random().toString(36).substring(7);
+                       transaction.set(doc(db, "adminLogs", stockLogId), {
+                         id: stockLogId,
+                         date: new Date().toISOString(),
+                         message: `❌ Cancelación: Pedido ${id} anulado. +${item.quantity}x ${product.name} devueltos al Stock Tienda. Nuevo Stock Tienda: ${newStock}.`,
+                         read: false
+                       });
+                     }
+                   });
+                }
+             }
+          }
+        } catch (error) {
+           console.error("Error updating order status in Firebase", error);
+        }
+      },
       
       deductPoints: (points) => set((state) => {
         if (!state.user) return {};
