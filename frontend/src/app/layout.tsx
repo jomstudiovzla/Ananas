@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "../shared/styles/mobile-fluid-core.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ZoneSelector from "@/components/ZoneSelector";
@@ -8,6 +9,13 @@ import CatalogInitializer from "@/components/CatalogInitializer";
 import FirebaseSync from "@/components/FirebaseSync";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Ananas Frutería | Supermercado Online",
@@ -35,7 +43,7 @@ export const metadata: Metadata = {
     description: "Frescura garantizada hasta la puerta de tu casa. Delivery rápido y seguro en Caracas.",
   },
   robots: "index, follow",
-  manifest: "/manifest.json",
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
@@ -45,6 +53,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="alternate icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <FirebaseSync />
         <CatalogInitializer />
