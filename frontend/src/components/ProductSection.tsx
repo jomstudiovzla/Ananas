@@ -2,12 +2,13 @@
 import { useRef, useState } from 'react';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useStore } from '@/store/useStore';
+import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { Product } from '@/data/mockDb';
 import ProductModal from './ProductModal';
 
 export default function ProductSection({ title, products }: { title: string, categoryId: string, products: Product[] }) {
   const addToCart = useStore(state => state.addToCart);
+  const { currency, rates } = useStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -65,7 +66,7 @@ export default function ProductSection({ title, products }: { title: string, cat
               <div className="mt-auto">
               <h3 className="text-sm font-bold text-gray-500 mb-2 uppercase leading-snug line-clamp-2 min-h-[40px] group-hover:text-ananas-dark transition">{p.name}</h3>
               <div className="flex items-center justify-between mt-auto">
-                <p className="text-2xl font-black text-gray-800">${p.price.toFixed(2)}</p>
+                <p className="text-2xl font-black text-gray-800">{convertAndFormatPrice(p.price, currency, rates)}</p>
                 <span className="text-xs font-bold text-ananas-dark bg-ananas-green/10 px-3 py-1.5 rounded-lg border border-ananas-green/20">{p.unit || '1 Kg'}</span>
               </div>
               </div>

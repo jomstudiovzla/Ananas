@@ -2,12 +2,12 @@
 import React from 'react';
 import { X, ShoppingCart, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStore } from '@/store/useStore';
+import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function CartSidebar({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
-  const { cart, removeFromCart, updateQuantity } = useStore();
+  const { cart, removeFromCart, updateQuantity, currency, rates } = useStore();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   
@@ -55,7 +55,7 @@ export default function CartSidebar({ isOpen, onClose }: { isOpen: boolean, onCl
                     </div>
                     <div className="flex-1">
                       <h4 className="text-sm font-bold text-gray-800 line-clamp-1">{item.name}</h4>
-                      <p className="text-xs text-gray-500 mb-2">${item.price.toFixed(2)} {item.unit}</p>
+                      <p className="text-xs text-gray-500 mb-2">{convertAndFormatPrice(item.price, currency, rates)} {item.unit}</p>
                       <div className="flex items-center gap-2">
                         <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200">-</button>
                         <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
@@ -63,7 +63,7 @@ export default function CartSidebar({ isOpen, onClose }: { isOpen: boolean, onCl
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <div className="font-black text-ananas-green">${(item.price * item.quantity).toFixed(2)}</div>
+                      <div className="font-black text-ananas-green">{convertAndFormatPrice(item.price * item.quantity, currency, rates)}</div>
                       <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 transition">
                         <Trash2 size={18} />
                       </button>
@@ -76,7 +76,7 @@ export default function CartSidebar({ isOpen, onClose }: { isOpen: boolean, onCl
             <div className="p-6 bg-white border-t border-gray-100 shadow-[0_-10px_20px_-15px_rgba(0,0,0,0.1)]">
               <div className="flex justify-between font-bold text-gray-800 mb-6 text-xl">
                 <span>Total:</span>
-                <span className="text-ananas-green text-2xl font-black">${mounted ? total.toFixed(2) : '0.00'}</span>
+                <span className="text-ananas-green text-2xl font-black">{mounted ? convertAndFormatPrice(total, currency, rates) : '$0.00'}</span>
               </div>
               <button 
                 disabled={!mounted || cart.length === 0}

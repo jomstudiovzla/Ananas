@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Menu, ShoppingBasket, Search, User, ShoppingCart, ChevronDown, Download, ChevronRight } from 'lucide-react';
+import { Menu, ShoppingBasket, Search, User, ShoppingCart, ChevronDown, Download, ChevronRight, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
@@ -11,9 +11,10 @@ import CartSidebar from './CartSidebar';
 export default function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCurrencyMenuOpen, setIsCurrencyMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
-  const { cart, user, rates } = useStore();
+  const { cart, user, rates, currency, setCurrency } = useStore();
   
   // To avoid hydration mismatch, only render state after mount
   const [mounted, setMounted] = useState(false);
@@ -32,8 +33,50 @@ export default function Navbar() {
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse mr-1"></span>
           Tasa Oficial BCV: USD $ {mounted ? rates.usd.toFixed(2) : '582.69'} / € EUR {mounted ? rates.eur.toFixed(2) : '669.76'}
         </div>
-        <div className="flex items-center gap-1 cursor-pointer">
-          USD - dólar estadounidense <ChevronDown size={14} />
+        
+        <div className="relative">
+          <button 
+            onClick={() => setIsCurrencyMenuOpen(!isCurrencyMenuOpen)}
+            className="flex items-center gap-1 cursor-pointer hover:text-gray-200 transition font-bold bg-transparent border-none text-white focus:outline-none"
+          >
+            {currency === 'USD' ? 'USD - Dólar' :
+             currency === 'EUR' ? 'EUR - Euro' : 'VES - Bolívar'}
+            <ChevronDown size={14} />
+          </button>
+          
+          <AnimatePresence>
+            {isCurrencyMenuOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 5 }}
+                className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 text-gray-700 font-bold"
+                onMouseLeave={() => setIsCurrencyMenuOpen(false)}
+              >
+                <button 
+                  onClick={() => { setCurrency('USD'); setIsCurrencyMenuOpen(false); }}
+                  className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'USD' ? 'text-ananas-green bg-green-50/30' : ''}`}
+                >
+                  <span>USD ($) - Dólar</span>
+                  {currency === 'USD' && <Check size={14} className="text-ananas-green" />}
+                </button>
+                <button 
+                  onClick={() => { setCurrency('EUR'); setIsCurrencyMenuOpen(false); }}
+                  className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'EUR' ? 'text-ananas-green bg-green-50/30' : ''}`}
+                >
+                  <span>EUR (€) - Euro</span>
+                  {currency === 'EUR' && <Check size={14} className="text-ananas-green" />}
+                </button>
+                <button 
+                  onClick={() => { setCurrency('VES'); setIsCurrencyMenuOpen(false); }}
+                  className={`w-full text-left px-4 py-2.5 text-xs hover:bg-gray-50 flex items-center justify-between cursor-pointer ${currency === 'VES' ? 'text-ananas-green bg-green-50/30' : ''}`}
+                >
+                  <span>VES (Bs.) - Bolívar</span>
+                  {currency === 'VES' && <Check size={14} className="text-ananas-green" />}
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

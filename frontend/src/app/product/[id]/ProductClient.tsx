@@ -1,5 +1,5 @@
 "use client";
-import { useStore } from '@/store/useStore';
+import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { notFound } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -9,6 +9,7 @@ export default function ProductClient({ id }: { id: string }) {
   const products = useStore(state => state.products);
   const product = products.find(p => p.id === id);
   const addToCart = useStore(state => state.addToCart);
+  const { currency, rates } = useStore();
   const [qty, setQty] = useState(1);
 
   if (!product) return notFound();
@@ -43,7 +44,7 @@ export default function ProductClient({ id }: { id: string }) {
             </div>
 
             <div className="flex items-end gap-4 mb-8">
-              <span className="text-5xl font-black text-ananas-green">${product.price.toFixed(2)}</span>
+              <span className="text-5xl font-black text-ananas-green">{convertAndFormatPrice(product.price, currency, rates)}</span>
               <span className="text-xl font-bold text-gray-400 mb-1">/ {product.unit}</span>
             </div>
 

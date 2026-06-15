@@ -50,6 +50,7 @@ interface AppState {
   products: Product[];
   orders: Order[];
   rates: ExchangeRates;
+  currency: 'USD' | 'EUR' | 'VES';
   setProducts: (products: Product[]) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (id: string) => void;
@@ -63,6 +64,34 @@ interface AppState {
   addPoints: (points: number) => void;
   updateOrderStatus: (id: string, status: Order['status']) => void;
   fetchRates: () => Promise<void>;
+  setCurrency: (currency: 'USD' | 'EUR' | 'VES') => void;
+}
+
+export function convertPrice(priceInUSD: number, currency: 'USD' | 'EUR' | 'VES', rates: ExchangeRates): number {
+  if (currency === 'EUR') {
+    return priceInUSD * (rates.usd / rates.eur);
+  }
+  if (currency === 'VES') {
+    return priceInUSD * rates.usd;
+  }
+  return priceInUSD;
+}
+
+export function getCurrencySymbol(currency: 'USD' | 'EUR' | 'VES'): string {
+  if (currency === 'EUR') return '€';
+  if (currency === 'VES') return 'Bs.';
+  return '$';
+}
+
+export function convertAndFormatPrice(priceInUSD: number, currency: 'USD' | 'EUR' | 'VES', rates: ExchangeRates): string {
+  const converted = convertPrice(priceInUSD, currency, rates);
+  if (currency === 'VES') {
+    return `Bs. ${converted.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+  if (currency === 'EUR') {
+    return `€ ${converted.toFixed(2)}`;
+  }
+  return `$${converted.toFixed(2)}`;
 }
 
 export const useStore = create<AppState>()(
@@ -78,7 +107,9 @@ export const useStore = create<AppState>()(
         eur: 669.76,
         lastUpdated: new Date().toLocaleString()
       },
+      currency: 'USD',
       
+      setCurrency: (currency) => set({ currency }),
       setProducts: (products) => set({ products }),
       
       addToCart: (item) => set((state) => {

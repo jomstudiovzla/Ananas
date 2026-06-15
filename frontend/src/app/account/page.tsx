@@ -1,12 +1,12 @@
 "use client";
-import { useStore, Order } from '@/store/useStore';
+import { useStore, Order, convertAndFormatPrice } from '@/store/useStore';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LogOut, Package, Star, Crown, ChevronRight, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AccountPage() {
-  const { user, logout, orders } = useStore();
+  const { user, logout, orders, currency, rates } = useStore();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -129,7 +129,7 @@ export default function AccountPage() {
                     <p className="text-sm text-gray-500">{order.items.length} {order.items.length === 1 ? 'artículo' : 'artículos'} • {order.status}</p>
                   </div>
                   <div className="mt-4 sm:mt-0 flex items-center gap-4">
-                    <span className="font-black text-xl text-gray-800">${order.total.toFixed(2)}</span>
+                    <span className="font-black text-xl text-gray-800">{convertAndFormatPrice(order.total, currency, rates)}</span>
                     <button 
                       onClick={() => setSelectedOrder(order)}
                       className="text-ananas-green font-bold bg-ananas-green/10 px-4 py-2 rounded-lg group-hover:bg-ananas-green group-hover:text-white transition"
@@ -189,12 +189,12 @@ export default function AccountPage() {
                         <div>
                           <p className="font-bold text-gray-800 text-sm">{item.name}</p>
                           <p className="text-xs text-gray-500">
-                            {item.quantity} x ${item.price.toFixed(2)} / {item.unit}
+                            {item.quantity} x {convertAndFormatPrice(item.price, currency, rates)} / {item.unit}
                           </p>
                         </div>
                       </div>
                       <span className="font-bold text-gray-800 text-sm">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {convertAndFormatPrice(item.price * item.quantity, currency, rates)}
                       </span>
                     </div>
                   ))}
@@ -239,23 +239,23 @@ export default function AccountPage() {
               <div className="border-t border-gray-200 pt-4 space-y-2 text-sm font-medium text-gray-600">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-bold text-gray-800">${selectedOrder.subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-gray-800">{convertAndFormatPrice(selectedOrder.subtotal, currency, rates)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Costo de Envío</span>
                   <span className="font-bold text-gray-800">
-                    {selectedOrder.deliveryFee > 0 ? `$${selectedOrder.deliveryFee.toFixed(2)}` : 'Gratis'}
+                    {selectedOrder.deliveryFee > 0 ? convertAndFormatPrice(selectedOrder.deliveryFee, currency, rates) : 'Gratis'}
                   </span>
                 </div>
                 {selectedOrder.discount > 0 && (
                   <div className="flex justify-between text-red-500 font-semibold">
                     <span>Descuento Club Ananas</span>
-                    <span className="font-bold">-${selectedOrder.discount.toFixed(2)}</span>
+                    <span className="font-bold">-{convertAndFormatPrice(selectedOrder.discount, currency, rates)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-black text-gray-800 pt-2 border-t border-gray-200">
                   <span>Total</span>
-                  <span className="text-ananas-green text-xl">${selectedOrder.total.toFixed(2)}</span>
+                  <span className="text-ananas-green text-xl">{convertAndFormatPrice(selectedOrder.total, currency, rates)}</span>
                 </div>
               </div>
 

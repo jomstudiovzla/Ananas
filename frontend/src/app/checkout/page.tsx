@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useStore } from '@/store/useStore';
+import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Truck, Store, CreditCard, CheckCircle2, ArrowLeft, ArrowRight, ShieldCheck, MapPin, Calendar, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function CheckoutPage() {
-  const { cart, clearCart, user, placeOrder, deductPoints, addPoints, rates } = useStore();
+  const { cart, clearCart, user, placeOrder, deductPoints, addPoints, rates, currency } = useStore();
   const [mounted, setMounted] = useState(false);
   const [shippingMethod, setShippingMethod] = useState<'delivery' | 'pickup'>('delivery');
   const [paymentMethod, setPaymentMethod] = useState<'pagomovil' | 'zelle' | 'cash' | 'creditcard' | 'paypal' | 'binance' | 'transferencia'>('pagomovil');
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
             {summary.discount > 0 && (
               <div className="flex justify-between border-b border-gray-200 pb-3 text-red-500 font-semibold">
                 <span>Descuento Club Ananas:</span>
-                <span>-${summary.discount.toFixed(2)}</span>
+                <span>-{convertAndFormatPrice(summary.discount, currency, rates)}</span>
               </div>
             )}
             <div className="flex justify-between border-b border-gray-200 pb-3 text-yellow-600 font-semibold">
@@ -228,7 +228,7 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between pt-1">
               <span className="text-gray-800 font-bold text-lg">Total Pagado:</span>
-              <span className="font-black text-ananas-green text-xl">${summary.total.toFixed(2)}</span>
+              <span className="font-black text-ananas-green text-xl">{convertAndFormatPrice(summary.total, currency, rates)}</span>
             </div>
           </div>
 
@@ -475,7 +475,7 @@ export default function CheckoutPage() {
                       <span>Monto exacto a pagar:</span>
                       <span className="text-base font-black">Bs. {(total * rates.usd).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-1">Calculado a la tasa oficial del BCV del día (Bs. {rates.usd.toFixed(2)} / USD).</div>
+                    <div className="text-[10px] text-gray-400 mt-1">Calculado a la tasa oficial del BCV del día (USD: Bs. {rates.usd.toFixed(2)} / EUR: Bs. {rates.eur.toFixed(2)}).</div>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-2">Referencia Bancaria (Últimos 4 dígitos)</label>
@@ -526,7 +526,7 @@ export default function CheckoutPage() {
                       <span>Monto exacto a pagar:</span>
                       <span className="text-base font-black">Bs. {(total * rates.usd).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-1">Calculado a la tasa oficial del BCV del día (Bs. {rates.usd.toFixed(2)} / USD).</div>
+                    <div className="text-[10px] text-gray-400 mt-1">Calculado a la tasa oficial del BCV del día (USD: Bs. {rates.usd.toFixed(2)} / EUR: Bs. {rates.eur.toFixed(2)}).</div>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 mb-2">Número de Referencia de Transferencia</label>
@@ -593,7 +593,7 @@ export default function CheckoutPage() {
                 <div className="space-y-4 text-center py-4">
                   <div className="text-sm text-gray-600 font-medium mb-3">
                     <p className="font-bold text-gray-800 mb-2">Pago Seguro vía PayPal:</p>
-                    <p>Serás redirigido a la ventana de PayPal para confirmar el cargo de <strong className="text-ananas-green">${total.toFixed(2)}</strong>.</p>
+                    <p>Serás redirigido a la ventana de PayPal para confirmar el cargo de <strong className="text-ananas-green">${total.toFixed(2)} USD</strong>.</p>
                   </div>
                   <div className="bg-[#FFC439] hover:bg-[#F2B522] text-blue-900 py-3 px-6 rounded-xl font-black transition inline-flex items-center gap-2 cursor-pointer shadow-sm">
                     PayPal checkout
@@ -625,7 +625,12 @@ export default function CheckoutPage() {
                   <div className="bg-yellow-50 p-3.5 rounded-xl border border-yellow-100 text-yellow-800 text-xs font-bold space-y-1">
                     <p>Si pagas en Bolívares en efectivo, el monto a entregar es:</p>
                     <p className="text-sm font-black text-gray-800">Bs. {(total * rates.usd).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                    <p className="text-[10px] text-gray-400 font-normal">Calculado a la tasa oficial del BCV (Bs. {rates.usd.toFixed(2)} / USD).</p>
+                    <p className="text-[10px] text-gray-400 font-normal">Calculado a la tasa oficial del BCV (USD: Bs. {rates.usd.toFixed(2)} / EUR: Bs. {rates.eur.toFixed(2)}).</p>
+                  </div>
+                  <div className="bg-yellow-50 p-3.5 rounded-xl border border-yellow-100 text-yellow-800 text-xs font-bold space-y-1 mt-2">
+                    <p>Si pagas en Euros en efectivo, el monto a entregar es:</p>
+                    <p className="text-sm font-black text-gray-800">€ {(total * (rates.usd / rates.eur)).toFixed(2)}</p>
+                    <p className="text-[10px] text-gray-400 font-normal">Calculado a la tasa oficial del BCV (USD: Bs. {rates.usd.toFixed(2)} / EUR: Bs. {rates.eur.toFixed(2)}).</p>
                   </div>
                 </div>
               )}
@@ -677,7 +682,7 @@ export default function CheckoutPage() {
               {cart.map((item) => (
                 <div key={item.id} className="flex justify-between items-center text-sm font-medium text-gray-600">
                   <span className="truncate max-w-[150px]">{item.name} <span className="text-gray-400">x{item.quantity}</span></span>
-                  <span className="font-bold text-gray-800">${(item.price * item.quantity).toFixed(2)}</span>
+                  <span className="font-bold text-gray-800">{convertAndFormatPrice(item.price * item.quantity, currency, rates)}</span>
                 </div>
               ))}
             </div>
@@ -702,7 +707,7 @@ export default function CheckoutPage() {
                     className="w-5 h-5 rounded border-gray-300 text-ananas-green focus:ring-ananas-green accent-ananas-green"
                   />
                   <span className="text-sm font-bold text-gray-700">
-                    Usar {Math.min(user.clubPoints, 350)} puntos (-${(Math.min(user.clubPoints, 350) * 0.01).toFixed(2)})
+                    Usar {Math.min(user.clubPoints, 350)} puntos (-{convertAndFormatPrice(Math.min(user.clubPoints, 350) * 0.01, currency, rates)})
                   </span>
                 </label>
               </div>
@@ -711,23 +716,23 @@ export default function CheckoutPage() {
             <div className="space-y-4 border-t border-b border-gray-200 py-6 text-gray-600 font-medium">
               <div className="flex justify-between">
                 <span>Subtotal ({cart.length} items)</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{convertAndFormatPrice(subtotal, currency, rates)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Costo de Envío</span>
-                <span>{deliveryFee > 0 ? `$${deliveryFee.toFixed(2)}` : 'Gratis'}</span>
+                <span>{deliveryFee > 0 ? convertAndFormatPrice(deliveryFee, currency, rates) : 'Gratis'}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-red-500 font-semibold">
                   <span>Descuento Club Ananas</span>
-                  <span>-${discount.toFixed(2)}</span>
+                  <span>-{convertAndFormatPrice(discount, currency, rates)}</span>
                 </div>
               )}
             </div>
 
             <div className="flex justify-between items-center">
               <span className="text-lg font-bold text-gray-800">Total a Pagar</span>
-              <span className="text-3xl font-black text-ananas-green">${total.toFixed(2)}</span>
+              <span className="text-3xl font-black text-ananas-green">{convertAndFormatPrice(total, currency, rates)}</span>
             </div>
 
             <div className="flex gap-2 items-center text-xs text-gray-400 justify-center">

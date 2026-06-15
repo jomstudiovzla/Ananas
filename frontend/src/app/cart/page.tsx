@@ -1,5 +1,5 @@
 "use client";
-import { useStore } from '@/store/useStore';
+import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { motion } from 'framer-motion';
 import { Trash2, ShoppingCart, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity } = useStore();
+  const { cart, removeFromCart, updateQuantity, currency, rates } = useStore();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
@@ -46,10 +46,10 @@ export default function CartPage() {
                 <div className="flex-1 w-full">
                   <p className="text-sm font-bold text-gray-400 mb-1">{item.category}</p>
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
-                  <p className="text-gray-500 font-medium">${item.price.toFixed(2)} {item.unit}</p>
+                  <p className="text-gray-500 font-medium">{convertAndFormatPrice(item.price, currency, rates)} {item.unit}</p>
                 </div>
                 <div className="flex flex-col sm:items-end gap-4 w-full sm:w-auto">
-                  <p className="text-2xl font-black text-ananas-green">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="text-2xl font-black text-ananas-green">{convertAndFormatPrice(item.price * item.quantity, currency, rates)}</p>
                   <div className="flex items-center justify-between sm:justify-end gap-6 w-full">
                     <div className="flex items-center bg-gray-50 rounded-xl border border-gray-200">
                       <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-10 h-10 flex items-center justify-center font-bold text-gray-600 hover:bg-white rounded-l-xl transition">-</button>
@@ -70,7 +70,7 @@ export default function CartPage() {
             <div className="space-y-4 mb-6 text-gray-600 font-medium border-b border-gray-200 pb-6">
               <div className="flex justify-between">
                 <span>Subtotal ({cart.length} items)</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{convertAndFormatPrice(total, currency, rates)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Delivery estimado</span>
@@ -79,7 +79,7 @@ export default function CartPage() {
             </div>
             <div className="flex justify-between items-center mb-8">
               <span className="text-xl font-bold text-gray-800">Total</span>
-              <span className="text-4xl font-black text-ananas-green">${total.toFixed(2)}</span>
+              <span className="text-4xl font-black text-ananas-green">{convertAndFormatPrice(total, currency, rates)}</span>
             </div>
             <button 
               onClick={() => {

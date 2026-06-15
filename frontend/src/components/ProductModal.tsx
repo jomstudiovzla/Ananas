@@ -1,7 +1,7 @@
 "use client";
 import { X, ShoppingCart, Heart, Share2, Truck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStore } from '@/store/useStore';
+import { useStore, convertAndFormatPrice } from '@/store/useStore';
 import { useState, useEffect } from 'react';
 
 interface Product {
@@ -18,6 +18,7 @@ interface Product {
 
 export default function ProductModal({ product, onClose }: { product: Product | null, onClose: () => void }) {
   const addToCart = useStore(state => state.addToCart);
+  const { currency, rates } = useStore();
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export default function ProductModal({ product, onClose }: { product: Product | 
             </p>
             
             <div className="flex items-end gap-3 mb-8">
-              <span className="text-4xl font-black text-ananas-green">${product.price.toFixed(2)}</span>
+              <span className="text-4xl font-black text-ananas-green">{convertAndFormatPrice(product.price, currency, rates)}</span>
               <span className="text-lg font-bold text-gray-400 mb-1">/ {product.unit || '1 Unidad'}</span>
             </div>
 
