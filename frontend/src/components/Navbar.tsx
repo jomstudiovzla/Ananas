@@ -28,10 +28,6 @@ export default function Navbar() {
   return (
     <>
       <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 flex justify-between items-center">
-        <div className="flex gap-4">
-          <span className="cursor-pointer hover:text-gray-200 transition">Instagram</span>
-          <span className="cursor-pointer hover:text-gray-200 transition">Facebook</span>
-        </div>
         <div className="hidden md:block flex items-center gap-1.5">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse mr-1"></span>
           Tasa Oficial BCV: USD $ {mounted ? rates.usd.toFixed(2) : '582.69'} / € EUR {mounted ? rates.eur.toFixed(2) : '669.76'}
