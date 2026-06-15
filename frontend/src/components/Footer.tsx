@@ -101,6 +101,7 @@ export default function Footer() {
             <li><Link href="/como-funciona" className="text-gray-500 hover:text-ananas-green transition font-medium">¿Cómo funciona Ananas?</Link></li>
             <li><Link href="/pagos" className="text-gray-500 hover:text-ananas-green transition font-medium">Métodos de Pago</Link></li>
             <li><Link href="/preguntas-frecuentes" className="text-gray-500 hover:text-ananas-green transition font-medium">Preguntas Frecuentes</Link></li>
+            <li><button onClick={() => setIsTestimonialOpen(true)} className="text-gray-500 hover:text-ananas-green transition font-medium text-left">Comentarios</button></li>
             <li><a href="https://api.whatsapp.com/message/LEWKZHRFSOK6F1?autoload=1&app_absent=0" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-ananas-green transition font-medium">Contáctanos</a></li>
           </ul>
         </div>

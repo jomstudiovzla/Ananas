@@ -28,7 +28,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 relative flex items-center justify-center min-h-[36px]">
+      <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 relative flex items-center justify-center min-h-[36px] z-50">
         <div className="flex items-center gap-1.5 text-center font-medium">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse mr-1"></span>
           Tasa del Día USD $ {mounted ? rates.usd.toFixed(2) : '587.41'} / € EUR {mounted ? rates.eur.toFixed(2) : '683.03'}
