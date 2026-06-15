@@ -29,7 +29,7 @@ export default function ProductGrid({ products }: { products: Product[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((p, i) => (
           <motion.div 
             key={p.id}
@@ -95,7 +95,7 @@ export default function ProductGrid({ products }: { products: Product[] }) {
                   transition={{ duration: 0.3 }}
                   src={p.image} 
                   alt={p.name} 
-                  className="max-h-full object-contain mix-blend-multiply drop-shadow-sm z-10" 
+                  className="w-full h-auto object-cover rounded-lg mix-blend-multiply drop-shadow-sm z-10" 
                 />
                 {p.labels && p.labels.map(label => (
                   <span key={label} className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-xs font-black px-2 py-1 rounded-md z-10">

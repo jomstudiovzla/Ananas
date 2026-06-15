@@ -7,6 +7,7 @@ import HowItWorks from "@/components/HowItWorks";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
 import { useStore } from "@/store/useStore";
 import { useEffect, useState } from "react";
+import { ResponsiveContainer } from "@/shared/components/ResponsiveContainer";
 import { categories } from "@/data/mockDb";
 
 export default function Home() {
@@ -21,8 +22,9 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <div className="bg-white -mt-6 rounded-t-3xl relative z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pt-6">
-        <Categories />
+      <ResponsiveContainer>
+        <div className="bg-white -mt-6 rounded-t-3xl relative z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pt-6">
+          <Categories />
         {mounted && (
           <>
             {categories.map((cat, index) => {
@@ -51,6 +53,7 @@ export default function Home() {
       <AboutUs />
       <HowItWorks />
       <TestimonialCarousel />
+      </ResponsiveContainer>
     </>
   );
 }
