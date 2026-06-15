@@ -38,8 +38,14 @@ export default function FirebaseSync() {
         }
         previousOrders[order.id] = order.status;
       });
-      // Ordenar localmente por fecha (las más recientes primero)
-      ords.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      // Ordenar localmente por fecha (las más recientes primero), protegiendo contra NaN por fechas localizadas
+      ords.sort((a, b) => {
+        const timeA = a.createdAt || new Date(a.date).getTime();
+        const timeB = b.createdAt || new Date(b.date).getTime();
+        
+        if (isNaN(timeA) || isNaN(timeB)) return 0;
+        return timeB - timeA;
+      });
       setOrders(ords);
     });
 
@@ -50,7 +56,12 @@ export default function FirebaseSync() {
       snapshot.forEach(doc => {
         logs.push(doc.data() as AdminLog);
       });
-      logs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      logs.sort((a, b) => {
+        const timeA = new Date(a.date).getTime();
+        const timeB = new Date(b.date).getTime();
+        if (isNaN(timeA) || isNaN(timeB)) return 0;
+        return timeB - timeA;
+      });
       setAdminLogs(logs);
     });
 

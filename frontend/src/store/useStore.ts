@@ -42,6 +42,7 @@ export interface Order {
   deliveryTime: string;
   status: 'Procesando' | 'Listo para retirar' | 'En camino' | 'Entregado' | 'Cancelado' | 'En revisión' | 'Facturado';
   paymentCapture?: string;
+  createdAt?: number;
   customerDetails?: {
     name: string;
     email: string;

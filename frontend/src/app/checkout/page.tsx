@@ -149,6 +149,7 @@ export default function CheckoutPage() {
       placeOrder({
         id: generatedId,
         date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }),
+        createdAt: Date.now(),
         items: [...cart], // clone items
         subtotal,
         deliveryFee,
