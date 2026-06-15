@@ -97,11 +97,6 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-6">
-            {mounted && user && user.email === 'admin@admin.com' && (
-              <Link href="/admin" className="text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full transition flex items-center gap-1">
-                🛡️ Panel Admin
-              </Link>
-            )}
             <div className="flex items-center gap-2 cursor-pointer hover:text-ananas-green transition" onClick={() => router.push('/account')}>
               <User size={24} className={mounted && user ? "text-ananas-green" : "text-gray-600"} />
               {mounted && user && <span className="text-sm font-bold hidden lg:block">Nivel {user.clubLevel}</span>}

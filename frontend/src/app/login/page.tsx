@@ -27,23 +27,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    if (email === 'admin@admin.com') {
-      if (password === '1234') {
-        login({
-          id: 'admin',
-          name: 'Administrador',
-          email: 'admin@admin.com',
-          clubPoints: 0,
-          clubLevel: 'Oro'
-        });
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
-        router.push('/admin');
-      } else {
-        setError('Contraseña incorrecta para el usuario administrador.');
-      }
-      return;
-    }
-
     if (email) {
       // Simulamos auth y nivel en el club Ananas
       login({

@@ -12,6 +12,7 @@ export default function AdminPage() {
   const orders = useStore(state => state.orders);
   const updateOrderStatus = useStore(state => state.updateOrderStatus);
   const user = useStore(state => state.user);
+  const login = useStore(state => state.login);
   
   const [status, setStatus] = useState<{type: 'idle' | 'success' | 'error', msg: string}>({type: 'idle', msg: ''});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -95,9 +96,15 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (mounted) {
-      if (user && user.email === 'admin@admin.com') {
-        setIsAdminLoggedIn(true);
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
+      if (user) {
+        if (user.email === 'admin@admin.com') {
+          setIsAdminLoggedIn(true);
+          sessionStorage.setItem('isAdminLoggedIn', 'true');
+        } else {
+          // If logged in as non-admin, force logout admin view
+          setIsAdminLoggedIn(false);
+          sessionStorage.removeItem('isAdminLoggedIn');
+        }
       } else {
         const logged = sessionStorage.getItem('isAdminLoggedIn');
         if (logged === 'true') {
@@ -110,6 +117,13 @@ export default function AdminPage() {
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (adminEmail === 'admin@admin.com' && adminPassword === '1234') {
+      login({
+        id: 'admin',
+        name: 'Administrador',
+        email: 'admin@admin.com',
+        clubPoints: 0,
+        clubLevel: 'Oro'
+      });
       setIsAdminLoggedIn(true);
       sessionStorage.setItem('isAdminLoggedIn', 'true');
       setLoginError('');
