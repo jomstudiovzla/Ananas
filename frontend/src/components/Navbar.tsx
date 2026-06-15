@@ -28,19 +28,19 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 flex justify-between items-center">
-        <div className="hidden md:block flex items-center gap-1.5">
+      <div className="bg-ananas-green text-white text-xs py-2 px-4 md:px-8 relative flex items-center justify-center min-h-[36px]">
+        <div className="flex items-center gap-1.5 text-center font-medium">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse mr-1"></span>
-          Tasa Oficial BCV: USD $ {mounted ? rates.usd.toFixed(2) : '582.69'} / € EUR {mounted ? rates.eur.toFixed(2) : '669.76'}
+          Tasa del Día USD $ {mounted ? rates.usd.toFixed(2) : '587.41'} / € EUR {mounted ? rates.eur.toFixed(2) : '683.03'}
         </div>
         
-        <div className="relative">
+        <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2">
           <button 
             onClick={() => setIsCurrencyMenuOpen(!isCurrencyMenuOpen)}
-            className="flex items-center gap-1 cursor-pointer hover:text-gray-200 transition font-bold bg-transparent border-none text-white focus:outline-none"
+            className="flex items-center gap-1 cursor-pointer hover:text-gray-200 transition font-bold bg-transparent border-none text-white focus:outline-none text-[11px] sm:text-xs"
           >
-            {currency === 'USD' ? 'USD - Dólar' :
-             currency === 'EUR' ? 'EUR - Euro' : 'VES - Bolívar'}
+            {currency === 'USD' ? 'USD ($) - Dólar' :
+             currency === 'EUR' ? 'EUR (€) - Euro' : 'VES (Bs.) - Bolívar'}
             <ChevronDown size={14} />
           </button>
           

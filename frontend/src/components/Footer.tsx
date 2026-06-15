@@ -123,8 +123,9 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-gray-100 text-center text-sm font-medium text-gray-400">
-        &copy; {new Date().getFullYear()} Ananas Frutería. Todos los derechos reservados.
+      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-gray-100 text-center text-sm font-medium text-gray-400 space-y-2">
+        <p className="text-xs text-gray-400 italic">Precios sujetos a cambios según la tasa oficial del día del BCV.</p>
+        <p>&copy; {new Date().getFullYear()} Ananas Frutería. Todos los derechos reservados.</p>
       </div>
 
       {/* Testimonial Form Modal */}

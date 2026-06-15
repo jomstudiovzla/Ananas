@@ -51,6 +51,7 @@ interface AppState {
   orders: Order[];
   rates: ExchangeRates;
   currency: 'USD' | 'EUR' | 'VES';
+  isAutoRates: boolean;
   setProducts: (products: Product[]) => void;
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (id: string) => void;
@@ -65,6 +66,8 @@ interface AppState {
   updateOrderStatus: (id: string, status: Order['status']) => void;
   fetchRates: () => Promise<void>;
   setCurrency: (currency: 'USD' | 'EUR' | 'VES') => void;
+  setIsAutoRates: (val: boolean) => void;
+  setRates: (usd: number, eur: number) => void;
 }
 
 export function convertPrice(priceInUSD: number, currency: 'USD' | 'EUR' | 'VES', rates: ExchangeRates): number {
@@ -103,14 +106,23 @@ export const useStore = create<AppState>()(
       products: initialProducts,
       orders: [],
       rates: {
-        usd: 582.69,
-        eur: 669.76,
+        usd: 587.41,
+        eur: 683.03,
         lastUpdated: new Date().toLocaleString()
       },
       currency: 'USD',
+      isAutoRates: true,
       
       setCurrency: (currency) => set({ currency }),
       setProducts: (products) => set({ products }),
+      setIsAutoRates: (isAutoRates) => set({ isAutoRates }),
+      setRates: (usd, eur) => set({
+        rates: {
+          usd,
+          eur,
+          lastUpdated: new Date().toLocaleString()
+        }
+      }),
       
       addToCart: (item) => set((state) => {
         const existing = state.cart.find((c) => c.id === item.id);
@@ -172,6 +184,9 @@ export const useStore = create<AppState>()(
 
       fetchRates: async () => {
         try {
+          // Skip auto fetch if manual mode is enabled
+          if (!useStore.getState().isAutoRates) return;
+          
           const [usdRes, eurRes] = await Promise.all([
             fetch('https://ve.dolarapi.com/v1/dolares/oficial'),
             fetch('https://ve.dolarapi.com/v1/euros/oficial')
@@ -180,7 +195,7 @@ export const useStore = create<AppState>()(
             const usdData = await usdRes.json();
             const eurData = await eurRes.json();
             const usdRate = usdData.promedio || usdData.venta || 587.41;
-            const eurRate = eurData.promedio || eurData.venta || 680.08;
+            const eurRate = eurData.promedio || eurData.venta || 683.03;
             set({
               rates: {
                 usd: Number(usdRate),

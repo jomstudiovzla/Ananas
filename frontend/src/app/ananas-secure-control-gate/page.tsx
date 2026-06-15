@@ -13,6 +13,10 @@ export default function AdminPage() {
   const updateOrderStatus = useStore(state => state.updateOrderStatus);
   const user = useStore(state => state.user);
   const login = useStore(state => state.login);
+  const rates = useStore(state => state.rates);
+  const isAutoRates = useStore(state => state.isAutoRates);
+  const setIsAutoRates = useStore(state => state.setIsAutoRates);
+  const setRates = useStore(state => state.setRates);
   
   const [status, setStatus] = useState<{type: 'idle' | 'success' | 'error', msg: string}>({type: 'idle', msg: ''});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -26,9 +30,18 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
 
   // Dashboard layout state
-  const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'csv'>('orders');
+  const [activeTab, setActiveTab] = useState<'orders' | 'inventory' | 'csv' | 'rates'>('orders');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  
+  // Exchange rates input state
+  const [usdRateInput, setUsdRateInput] = useState(rates.usd.toString());
+  const [eurRateInput, setEurRateInput] = useState(rates.eur.toString());
+
+  useEffect(() => {
+    setUsdRateInput(rates.usd.toString());
+    setEurRateInput(rates.eur.toString());
+  }, [rates.usd, rates.eur]);
   
   // Search state for inventory
   const [inventorySearch, setInventorySearch] = useState('');
@@ -431,6 +444,16 @@ export default function AdminPage() {
         >
           <Upload size={20} /> Cargar Catálogo (CSV)
         </button>
+        <button
+          onClick={() => setActiveTab('rates')}
+          className={`flex items-center gap-2 pb-3 px-2 font-bold text-lg transition-all border-b-2 ${
+            activeTab === 'rates' 
+              ? 'border-ananas-green text-ananas-green' 
+              : 'border-transparent text-gray-400 hover:text-gray-600'
+          }`}
+        >
+          <TrendingUp size={20} /> Configuración de Tasas
+        </button>
       </div>
 
       {/* ------------------ TAB 1: ORDERS MANAGEMENT ------------------ */}
@@ -689,6 +712,118 @@ export default function AdminPage() {
           <div className="mt-8 text-left border-t border-gray-100 pt-6 max-w-md mx-auto">
               <p className="text-sm text-gray-400 mb-2 font-bold">Resumen de Inventario:</p>
               <p className="text-xs text-gray-500">Productos actualmente cargados: <strong className="text-gray-800">{products.length}</strong></p>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------ TAB 4: EXCHANGE RATES CONFIGURATION ------------------ */}
+      {activeTab === 'rates' && (
+        <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-sm space-y-6 animate-in fade-in duration-300">
+          <div className="max-w-xl mx-auto space-y-6">
+            <div>
+              <h2 className="text-2xl font-black text-gray-800 flex items-center gap-2">
+                <TrendingUp className="text-ananas-green" /> Configuración de Tasas de Cambio
+              </h2>
+              <p className="text-gray-500 font-medium text-sm mt-1">
+                Administra cómo se actualizan y calculan los precios de la tienda en tiempo real.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 space-y-4">
+              <label className="flex items-start gap-3 cursor-pointer select-none">
+                <input 
+                  type="checkbox" 
+                  checked={isAutoRates}
+                  onChange={(e) => {
+                    setIsAutoRates(e.target.checked);
+                    setStatus({type: 'idle', msg: ''});
+                  }}
+                  className="w-5 h-5 rounded border-gray-300 text-ananas-green focus:ring-ananas-green accent-ananas-green mt-0.5"
+                />
+                <div>
+                  <span className="font-bold text-gray-800 text-sm block">Actualizar tasas automáticamente</span>
+                  <span className="text-xs text-gray-500 block">
+                    Consulta las tasas oficiales del Banco Central de Venezuela en tiempo real al cargar la página.
+                  </span>
+                </div>
+              </label>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Tasa del Dólar (USD / VES)</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Bs.</span>
+                    <input 
+                      type="number"
+                      step="0.01"
+                      disabled={isAutoRates}
+                      value={usdRateInput}
+                      onChange={(e) => setUsdRateInput(e.target.value)}
+                      placeholder="Ej. 587.41"
+                      className="w-full bg-white disabled:bg-gray-100 border border-gray-200 rounded-xl pl-12 pr-4 py-3 font-bold text-gray-800 focus:outline-none focus:border-ananas-green transition"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Tasa del Euro (EUR / VES)</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Bs.</span>
+                    <input 
+                      type="number"
+                      step="0.01"
+                      disabled={isAutoRates}
+                      value={eurRateInput}
+                      onChange={(e) => setEurRateInput(e.target.value)}
+                      placeholder="Ej. 683.03"
+                      className="w-full bg-white disabled:bg-gray-100 border border-gray-200 rounded-xl pl-12 pr-4 py-3 font-bold text-gray-800 focus:outline-none focus:border-ananas-green transition"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {isAutoRates && (
+                <p className="text-xs text-ananas-green font-bold bg-green-50 p-3.5 rounded-xl border border-green-100">
+                  💡 Las tasas están controladas automáticamente por la API del BCV (Dólar: Bs. {rates.usd.toFixed(2)} / Euro: Bs. {rates.eur.toFixed(2)}). Para configurarlas manualmente, desmarca la casilla de actualización automática.
+                </p>
+              )}
+
+              {!isAutoRates && (
+                <button 
+                  onClick={() => {
+                    const usdVal = parseFloat(usdRateInput);
+                    const eurVal = parseFloat(eurRateInput);
+                    if (isNaN(usdVal) || usdVal <= 0 || isNaN(eurVal) || eurVal <= 0) {
+                      setStatus({type: 'error', msg: 'Las tasas ingresadas deben ser números mayores a 0.'});
+                      return;
+                    }
+                    setRates(usdVal, eurVal);
+                    setStatus({type: 'success', msg: 'Tasas de cambio actualizadas con éxito.'});
+                  }}
+                  className="w-full bg-ananas-green text-white font-bold py-3.5 rounded-xl hover:bg-ananas-dark transition shadow-lg shadow-ananas-green/20 cursor-pointer animate-in fade-in duration-200"
+                >
+                  Guardar Tasas Manuales
+                </button>
+              )}
+            </div>
+
+            {status.type === 'success' && (
+              <div className="bg-green-50 text-green-700 p-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm">
+                <CheckCircle size={20} /> {status.msg}
+              </div>
+            )}
+
+            {status.type === 'error' && (
+              <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm">
+                <AlertTriangle size={20} /> {status.msg}
+              </div>
+            )}
+            
+            <div className="border-t border-gray-100 pt-6 text-center text-xs text-gray-400 font-bold">
+              Última actualización registrada: {rates.lastUpdated || 'No registrada'}
+            </div>
           </div>
         </div>
       )}
