@@ -2,154 +2,249 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '@/store/useStore';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Eye, EyeOff, ShieldCheck, Star, Truck, Tag, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+
+const PERKS = [
+  { icon: Star,       text: 'Acumula puntos Club Ananas con cada compra' },
+  { icon: Truck,      text: 'Envío gratis en pedidos desde $15' },
+  { icon: Tag,        text: 'Ofertas exclusivas para miembros' },
+  { icon: ShieldCheck, text: 'Pagos 100% seguros – Zelle, Pago Móvil, PayPal' },
+];
 
 export default function LoginPage() {
   const login = useStore(state => state.login);
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [cedula, setCedula] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [redirectPath, setRedirectPath] = useState('/account');
+
+  const [email, setEmail]             = useState('');
+  const [name, setName]               = useState('');
+  const [cedula, setCedula]           = useState('');
+  const [phone, setPhone]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [showPass, setShowPass]       = useState(false);
+  const [error, setError]             = useState('');
+  const [isRegistering, setIsReg]     = useState(false);
+  const [redirectPath, setRedirect]   = useState('/account');
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const red = params.get('redirect');
-      if (red) {
-        setRedirectPath(red);
-      }
-    }
+    const params = new URLSearchParams(window.location.search);
+    const red = params.get('redirect');
+    if (red) setRedirect(red);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (email) {
-      if (email.trim().toLowerCase() === 'admin@jomstudio.com' && password.trim() === 'VZLA') {
-        login({
-          id: 'admin',
-          name: 'Administrador',
-          email: 'admin@jomstudio.com',
-          clubPoints: 0,
-          clubLevel: 'Oro'
-        });
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
-        router.push(redirectPath === '/account' ? '/account' : redirectPath);
-      } else {
-        // Simulamos auth y nivel en el club Ananas normal
-        login({
-          id: Math.random().toString(),
-          name: name || email.split('@')[0],
-          email: email,
-          cedula: cedula || undefined,
-          phone: phone || undefined,
-          clubPoints: 350,
-          clubLevel: 'Bronce'
-        });
-        router.push(redirectPath);
-      }
+    if (!email.trim()) { setError('Ingresa tu correo electrónico.'); return; }
+
+    if (email.trim().toLowerCase() === 'admin@jomstudio.com' && password.trim() === 'VZLA') {
+      login({ id: 'admin', name: 'Administrador', email: 'admin@jomstudio.com', clubPoints: 0, clubLevel: 'Oro' });
+      sessionStorage.setItem('isAdminLoggedIn', 'true');
+      router.push('/account');
+      return;
     }
+
+    login({
+      id: Math.random().toString(),
+      name: name || email.split('@')[0],
+      email: email.trim(),
+      cedula: cedula || undefined,
+      phone: phone || undefined,
+      clubPoints: 350,
+      clubLevel: 'Bronce',
+    });
+    router.push(redirectPath);
   };
 
   return (
-    <div className="max-w-md mx-auto py-20 px-4">
-      <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-        <h1 className="text-3xl font-black text-gray-800 mb-2 text-center">
-          {isRegistering ? 'Únete a Ananas' : 'Inicia Sesión'}
-        </h1>
-        <p className="text-center text-gray-500 mb-8 font-medium">
-          {isRegistering ? 'Disfruta de envíos rápidos y ofertas exclusivas del Club.' : 'Qué bueno verte de nuevo.'}
-        </p>
+    <div className="min-h-screen flex">
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {isRegistering && (
-            <>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Nombre completo</label>
-                <input 
-                  required 
-                  type="text" 
-                  value={name} 
-                  onChange={e => setName(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
-                  placeholder="Juan Pérez"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Cédula o RIF</label>
-                  <input 
-                    required 
-                    type="text" 
-                    value={cedula} 
-                    onChange={e => setCedula(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
-                    placeholder="V-12345678"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Teléfono</label>
-                  <input 
-                    required 
-                    type="tel" 
-                    value={phone} 
-                    onChange={e => setPhone(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
-                    placeholder="0414-1234567"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-          
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">Correo electrónico</label>
-            <input 
-              required 
-              type="email" 
-              value={email} 
-              onChange={e => setEmail(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
-              placeholder="tu@correo.com"
-            />
-          </div>
+      {/* Left panel – branding */}
+      <div className="hidden lg:flex lg:w-5/12 bg-gradient-to-br from-ananas-dark via-[#1a3a1a] to-ananas-green relative overflow-hidden flex-col justify-between p-12">
+        {/* Decorative circles */}
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/5 rounded-full" />
+        <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-white/5 rounded-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-ananas-green/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
-            <input 
-              required 
-              type="password" 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-ananas-green transition"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {error && (
-            <div className="text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg text-center">
-              {error}
-            </div>
-          )}
-
-          <button type="submit" className="w-full bg-ananas-green text-white font-bold text-lg py-4 rounded-xl hover:bg-ananas-dark transition shadow-lg shadow-ananas-green/20">
-            {isRegistering ? 'Crear Cuenta' : 'Entrar'}
-          </button>
-        </form>
-
-        <div className="mt-8 text-center">
-          <button 
-            onClick={() => setIsRegistering(!isRegistering)}
-            className="text-gray-500 hover:text-ananas-green font-bold transition"
-          >
-            {isRegistering ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate aquí'}
-          </button>
+        {/* Logo */}
+        <div className="relative z-10">
+          <Link href="/" className="inline-flex items-center gap-3">
+            <span className="text-4xl">🍍</span>
+            <span className="text-3xl font-black text-white tracking-tight">Ananas</span>
+          </Link>
+          <p className="text-white/60 text-sm font-medium mt-1">Tu frutería y mercado en línea</p>
         </div>
+
+        {/* Perks */}
+        <div className="relative z-10 space-y-5">
+          <h2 className="text-2xl font-black text-white mb-6 leading-tight">
+            Todo lo fresco,<br />
+            <span className="text-yellow-400">en tu puerta hoy</span>
+          </h2>
+          {PERKS.map(({ icon: Icon, text }) => (
+            <div key={text} className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                <Icon size={18} className="text-yellow-400" />
+              </div>
+              <p className="text-white/80 text-sm font-medium">{text}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer tagline */}
+        <p className="relative z-10 text-white/40 text-xs font-medium">
+          © 2026 Ananas Frutería · Caracas Este
+        </p>
+      </div>
+
+      {/* Right panel – form */}
+      <div className="flex-1 flex items-center justify-center px-6 py-16 bg-gray-50">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          {/* Mobile logo */}
+          <div className="flex lg:hidden items-center gap-2 justify-center mb-8">
+            <span className="text-3xl">🍍</span>
+            <span className="text-2xl font-black text-ananas-green">Ananas</span>
+          </div>
+
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+
+            {/* Toggle tabs */}
+            <div className="flex bg-gray-100 rounded-2xl p-1 mb-8">
+              {['Iniciar Sesión', 'Registrarme'].map((label, idx) => (
+                <button
+                  key={label}
+                  onClick={() => { setIsReg(idx === 1); setError(''); }}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-black transition-all ${
+                    isRegistering === (idx === 1)
+                      ? 'bg-white text-ananas-green shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={isRegistering ? 'register' : 'login'}
+                initial={{ opacity: 0, x: isRegistering ? 20 : -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h1 className="text-2xl font-black text-gray-800 mb-1">
+                  {isRegistering ? '¡Bienvenido a Ananas! 🍍' : 'Qué bueno verte de nuevo'}
+                </h1>
+                <p className="text-sm text-gray-500 font-medium mb-6">
+                  {isRegistering
+                    ? 'Crea tu cuenta y empieza a acumular puntos Club Ananas.'
+                    : 'Ingresa tus datos para continuar.'}
+                </p>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Register-only fields */}
+                  {isRegistering && (
+                    <>
+                      <div>
+                        <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Nombre completo</label>
+                        <input
+                          required type="text" value={name}
+                          onChange={e => setName(e.target.value)}
+                          placeholder="Juan Pérez"
+                          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Cédula / RIF</label>
+                          <input
+                            required type="text" value={cedula}
+                            onChange={e => setCedula(e.target.value)}
+                            placeholder="V-12345678"
+                            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Teléfono</label>
+                          <input
+                            required type="tel" value={phone}
+                            onChange={e => setPhone(e.target.value)}
+                            placeholder="0414-000-0000"
+                            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Correo electrónico</label>
+                    <input
+                      required type="email" value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="tu@correo.com"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                    />
+                  </div>
+
+                  {/* Password */}
+                  <div>
+                    <label className="block text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide">Contraseña</label>
+                    <div className="relative">
+                      <input
+                        required
+                        type={showPass ? 'text' : 'password'}
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full border border-gray-200 rounded-xl px-4 py-3 pr-11 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ananas-green/30 focus:border-ananas-green transition"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPass(s => !s)}
+                        className="absolute right-3 top-3.5 text-gray-400 hover:text-ananas-green transition"
+                      >
+                        {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Error */}
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-bold px-4 py-3 rounded-xl">
+                      {error}
+                    </div>
+                  )}
+
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    className="w-full bg-ananas-green hover:bg-ananas-dark text-white font-black text-base py-4 rounded-2xl transition-all shadow-lg shadow-ananas-green/25 flex items-center justify-center gap-2 group mt-2"
+                  >
+                    {isRegistering ? 'Crear mi cuenta' : 'Entrar a Ananas'}
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </form>
+
+                {/* Privacy note */}
+                <p className="text-center text-xs text-gray-400 font-medium mt-5">
+                  Al continuar aceptas nuestros{' '}
+                  <Link href="/terminos" className="underline hover:text-ananas-green">Términos</Link>
+                  {' '}y{' '}
+                  <Link href="/privacidad" className="underline hover:text-ananas-green">Privacidad</Link>.
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
